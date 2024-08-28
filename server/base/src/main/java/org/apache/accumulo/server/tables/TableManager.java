@@ -29,6 +29,7 @@ import java.util.Set;
 
 import org.apache.accumulo.core.Constants;
 import org.apache.accumulo.core.client.NamespaceNotFoundException;
+import org.apache.accumulo.core.clientImpl.ZooKeeperMapping;
 import org.apache.accumulo.core.data.InstanceId;
 import org.apache.accumulo.core.data.NamespaceId;
 import org.apache.accumulo.core.data.TableId;
@@ -74,7 +75,10 @@ public class TableManager {
     String zPath = Constants.ZROOT + "/" + instanceId + Constants.ZNAMESPACES + "/" + namespaceId;
 
     zoo.putPersistentData(zPath, new byte[0], existsPolicy);
-    zoo.putPersistentData(zPath + Constants.ZNAMESPACE_NAME, namespace.getBytes(UTF_8),
+    // zoo.putPersistentData(zPath + Constants.ZNAMESPACE_NAME, namespace.getBytes(UTF_8),
+    // existsPolicy);
+    ZooKeeperMapping.appendNamespaceToMap(zoo,
+        Constants.ZROOT + "/" + instanceId + Constants.ZNAMESPACES, namespaceId, namespace,
         existsPolicy);
     var propKey = NamespacePropKey.of(instanceId, namespaceId);
     if (!propStore.exists(propKey)) {

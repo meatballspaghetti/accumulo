@@ -20,12 +20,8 @@ package org.apache.accumulo.core.clientImpl;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.SortedMap;
-import java.util.TreeMap;
 import java.util.function.BiConsumer;
 
 import org.apache.accumulo.core.Constants;
@@ -39,6 +35,8 @@ import org.slf4j.LoggerFactory;
 
 public class Namespaces {
   private static final Logger log = LoggerFactory.getLogger(Namespaces.class);
+  private static volatile Map<String,String> currentNamespaceMap = new HashMap<>();
+  private static volatile long lastMzxid;
 
   public static boolean exists(ClientContext context, NamespaceId namespaceId) {
     ZooCache zc = context.getZooCache();
@@ -77,12 +75,18 @@ public class Namespaces {
   private static void getAllNamespaces(ClientContext context,
       BiConsumer<String,String> biConsumer) {
     final ZooCache zc = context.getZooCache();
-    List<String> namespaceIds = zc.getChildren(context.getZooKeeperRoot() + Constants.ZNAMESPACES);
-    for (String id : namespaceIds) {
-      byte[] path = zc.get(context.getZooKeeperRoot() + Constants.ZNAMESPACES + "/" + id
-          + Constants.ZNAMESPACE_NAME);
-      if (path != null) {
-        biConsumer.accept(id, new String(path, UTF_8));
+    String zPath = context.getZooKeeperRoot() + Constants.ZNAMESPACES;
+    final ZooCache.ZcStat stat = new ZooCache.ZcStat();
+
+    // Retrieve the current data and stat from ZooCache
+    zc.get(zPath, stat);
+    if (stat.getMzxid() != lastMzxid) {
+      try {
+        currentNamespaceMap = ZooKeeperMapping.getNamespaceMap(zc, zPath);
+        currentNamespaceMap.forEach(biConsumer);
+        lastMzxid = stat.getMzxid();
+      } catch (Exception e) {
+        log.warn("Failed to retrieve namespace data from ZooKeeper", e);
       }
     }
   }
