@@ -156,6 +156,11 @@ public class ClientContext implements AccumuloClient {
   private ThreadPoolExecutor cleanupThreadPool;
   private ThreadPoolExecutor scannerReadaheadPool;
 
+  private final Supplier<InstanceId> instanceIdSupplier = Suppliers.memoize(this::getInstanceId);
+  public InstanceId getMemoizedInstanceId() {
+    return instanceIdSupplier.get();
+  }
+
   private void ensureOpen() {
     if (closed) {
       throw new IllegalStateException("This client was closed.");
@@ -544,6 +549,7 @@ public class ClientContext implements AccumuloClient {
    */
   public InstanceId getInstanceID() {
     ensureOpen();
+//    return instanceIdSupplier.get();
     if (instanceId == null) {
       // lookup by name
       final String instanceName = info.getInstanceName();
