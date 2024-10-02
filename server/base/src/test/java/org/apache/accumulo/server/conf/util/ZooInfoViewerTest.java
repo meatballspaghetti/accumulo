@@ -19,13 +19,7 @@
 package org.apache.accumulo.server.conf.util;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.apache.accumulo.core.Constants.ZINSTANCES;
-import static org.apache.accumulo.core.Constants.ZNAMESPACES;
-import static org.apache.accumulo.core.Constants.ZNAMESPACE_NAME;
-import static org.apache.accumulo.core.Constants.ZROOT;
-import static org.apache.accumulo.core.Constants.ZTABLES;
-import static org.apache.accumulo.core.Constants.ZTABLE_NAME;
-import static org.apache.accumulo.core.Constants.ZTABLE_NAMESPACE;
+import static org.apache.accumulo.core.Constants.*;
 import static org.easymock.EasyMock.capture;
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.eq;
@@ -239,8 +233,8 @@ public class ZooInfoViewerTest {
 
     var nsBasePath = ZooUtil.getRoot(iid) + ZNAMESPACES;
     expect(zooReader.getChildren(nsBasePath)).andReturn(List.of("a")).anyTimes();
-    expect(zooReader.getData(eq(nsBasePath + "/a" + ZNAMESPACE_NAME)))
-        .andReturn("a_name".getBytes(UTF_8)).anyTimes();
+    // expect(zooReader.getData(eq(nsBasePath + "/a" + ZNAMESPACE_NAME)))
+    // .andReturn("a_name".getBytes(UTF_8)).anyTimes();
     var nsPropBytes =
         propCodec.toBytes(new VersionedProperties(123, Instant.now(), Map.of("n1", "nv1")));
     NamespaceId nsId = NamespaceId.of("a");
@@ -328,12 +322,12 @@ public class ZooInfoViewerTest {
     String aNamespaceId = "a_nsid";
     expect(zooReader.getChildren(nsBasePath))
         .andReturn(List.of("+accumulo", "+default", aNamespaceId)).anyTimes();
-    expect(zooReader.getData(eq(nsBasePath + "/+default" + ZNAMESPACE_NAME)))
-        .andReturn("".getBytes(UTF_8)).anyTimes();
-    expect(zooReader.getData(eq(nsBasePath + "/+accumulo" + ZNAMESPACE_NAME)))
-        .andReturn("accumulo".getBytes(UTF_8)).anyTimes();
-    expect(zooReader.getData(eq(nsBasePath + "/" + aNamespaceId + ZNAMESPACE_NAME)))
-        .andReturn("a_namespace_name".getBytes(UTF_8)).anyTimes();
+    // expect(zooReader.getData(eq(nsBasePath + "/+default" + ZNAMESPACE_NAME)))
+    // .andReturn("".getBytes(UTF_8)).anyTimes();
+    // expect(zooReader.getData(eq(nsBasePath + "/+accumulo" + ZNAMESPACE_NAME)))
+    // .andReturn("accumulo".getBytes(UTF_8)).anyTimes();
+    // expect(zooReader.getData(eq(nsBasePath + "/" + aNamespaceId + ZNAMESPACE_NAME)))
+    // .andReturn("a_namespace_name".getBytes(UTF_8)).anyTimes();
 
     var tBasePath = ZooUtil.getRoot(iid) + ZTABLES;
     String aTableId = "t_tid";

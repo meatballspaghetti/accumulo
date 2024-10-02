@@ -72,14 +72,13 @@ public class TableManager {
       InstanceId instanceId, NamespaceId namespaceId, String namespace,
       NodeExistsPolicy existsPolicy) throws KeeperException, InterruptedException {
     log.debug("Creating ZooKeeper entries for new namespace {} (ID: {})", namespace, namespaceId);
-    String zPath = Constants.ZROOT + "/" + instanceId + Constants.ZNAMESPACES + "/" + namespaceId;
+    String zPath = Constants.ZROOT + "/" + instanceId + Constants.ZNAMESPACES;
 
-    zoo.putPersistentData(zPath, new byte[0], existsPolicy);
+    zoo.putPersistentData(zPath + "/" + namespaceId, new byte[0], existsPolicy);
     // zoo.putPersistentData(zPath + Constants.ZNAMESPACE_NAME, namespace.getBytes(UTF_8),
     // existsPolicy);
-    NamespaceMapping.appendNamespaceToMap(zoo,
-        Constants.ZROOT + "/" + instanceId + Constants.ZNAMESPACES, namespaceId, namespace,
-        existsPolicy);
+    zoo.putPersistentData(zPath,
+        NamespaceMapping.writeNamespaceToMap(zoo, zPath, namespaceId, namespace), existsPolicy);
     var propKey = NamespacePropKey.of(instanceId, namespaceId);
     if (!propStore.exists(propKey)) {
       propStore.create(propKey, Map.of());

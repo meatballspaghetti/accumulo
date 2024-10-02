@@ -38,6 +38,14 @@ import com.google.gson.Gson;
 
 public class NamespaceMapping {
   private static final Gson gson = new Gson();
+  private final ClientContext context;
+  private volatile SortedMap<NamespaceId,String> currentNamespaceMap = emptySortedMap();
+  private volatile SortedMap<String,NamespaceId> currentNamespaceReverseMap = emptySortedMap();
+  private volatile long lastMzxid;
+
+  public NamespaceMapping(ClientContext context) {
+    this.context = context;
+  }
 
   public static void initializeNamespaceMap(ZooReaderWriter zoo, String zPath)
       throws InterruptedException, KeeperException {
@@ -48,9 +56,9 @@ public class NamespaceMapping {
         ZooUtil.NodeExistsPolicy.OVERWRITE);
   }
 
-  public static void appendNamespaceToMap(ZooReaderWriter zoo, String zPath,
-      NamespaceId namespaceId, String namespaceName, ZooUtil.NodeExistsPolicy existsPolicy)
-      throws InterruptedException, KeeperException {
+  public static byte[] writeNamespaceToMap(ZooReaderWriter zoo, String zPath,
+      NamespaceId namespaceId, String namespaceName) throws InterruptedException, KeeperException {
+    byte[] updatedMap = new byte[0];
     if (!Namespace.DEFAULT.id().equals(namespaceId)
         && !Namespace.ACCUMULO.id().equals(namespaceId)) {
       byte[] data = zoo.getData(zPath);
@@ -59,23 +67,20 @@ public class NamespaceMapping {
       Map<String,String> namespaceMap = gson.fromJson(jsonData, type);
       namespaceMap.put(namespaceId.canonical(), namespaceName);
       String serializedJson = gson.toJson(namespaceMap);
-      zoo.putPersistentData(zPath, serializedJson.getBytes(StandardCharsets.UTF_8), existsPolicy);
+      updatedMap = serializedJson.getBytes(StandardCharsets.UTF_8);
     }
+    return updatedMap;
   }
 
-  private final ClientContext context;
-
-  private volatile SortedMap<NamespaceId,String> currentNamespaceMap = emptySortedMap();
-  private volatile SortedMap<String,NamespaceId> currentNamespaceReverseMap = emptySortedMap();
-  private volatile long lastMzxid;
-
-  public NamespaceMapping(ClientContext context) {
-    this.context = context;
+  public static byte[] serialize(Map<String,String> map) {
+    String jsonData = gson.toJson(map);
+    return jsonData.getBytes(StandardCharsets.UTF_8);
   }
 
-  // visible for testing
-  public static byte[] serialize(Map<String,String> mapping) {
-    return null; // TODO put serialization here
+  public static Map<String,String> deserialize(byte[] data) {
+    String jsonData = new String(data, StandardCharsets.UTF_8);
+    Type type = new TypeToken<Map<String,String>>() {}.getType();
+    return gson.fromJson(jsonData, type);
   }
 
   private synchronized void update() {

@@ -21,7 +21,6 @@ package org.apache.accumulo.server.conf.util;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.apache.accumulo.core.Constants.ZINSTANCES;
 import static org.apache.accumulo.core.Constants.ZNAMESPACES;
-import static org.apache.accumulo.core.Constants.ZNAMESPACE_NAME;
 import static org.apache.accumulo.core.Constants.ZROOT;
 import static org.apache.accumulo.core.Constants.ZTABLES;
 import static org.apache.accumulo.core.Constants.ZTABLE_NAME;
@@ -34,6 +33,7 @@ import java.util.TreeMap;
 import java.util.UUID;
 
 import org.apache.accumulo.core.clientImpl.Namespace;
+import org.apache.accumulo.core.clientImpl.NamespaceMapping;
 import org.apache.accumulo.core.data.InstanceId;
 import org.apache.accumulo.core.data.NamespaceId;
 import org.apache.accumulo.core.data.TableId;
@@ -96,12 +96,10 @@ public class ZooPropUtils {
     SortedMap<NamespaceId,String> namespaceToName = new TreeMap<>();
     String zooNsRoot = ZooUtil.getRoot(iid) + ZNAMESPACES;
     try {
-      List<String> nsids = zooReader.getChildren(zooNsRoot);
-      for (String id : nsids) {
-        String path = zooNsRoot + "/" + id + ZNAMESPACE_NAME;
-        String name = new String(zooReader.getData(path), UTF_8);
-        namespaceToName.put(NamespaceId.of(id), name);
-      }
+      Map<String,String> idToName = NamespaceMapping.deserialize(zooReader.getData(zooNsRoot));
+      idToName.forEach((idString, name) -> {
+        namespaceToName.put(NamespaceId.of(idString), name);
+      });
     } catch (InterruptedException ex) {
       Thread.currentThread().interrupt();
       throw new IllegalStateException("Interrupted reading namespace ids from ZooKeeper", ex);
