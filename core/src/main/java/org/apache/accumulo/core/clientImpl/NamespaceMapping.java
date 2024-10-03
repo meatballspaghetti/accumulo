@@ -49,11 +49,9 @@ public class NamespaceMapping {
 
   public static void initializeNamespaceMap(ZooReaderWriter zoo, String zPath)
       throws InterruptedException, KeeperException {
-    var map = Map.of(Namespace.DEFAULT.id().canonical(), Namespace.DEFAULT.name(),
+    Map<String,String> map = Map.of(Namespace.DEFAULT.id().canonical(), Namespace.DEFAULT.name(),
         Namespace.ACCUMULO.id().canonical(), Namespace.ACCUMULO.name());
-    String jsonNamespaces = gson.toJson(map);
-    zoo.putPersistentData(zPath, jsonNamespaces.getBytes(StandardCharsets.UTF_8),
-        ZooUtil.NodeExistsPolicy.OVERWRITE);
+    zoo.putPersistentData(zPath, serialize(map), ZooUtil.NodeExistsPolicy.OVERWRITE);
   }
 
   public static byte[] writeNamespaceToMap(ZooReaderWriter zoo, String zPath,
@@ -62,12 +60,9 @@ public class NamespaceMapping {
     if (!Namespace.DEFAULT.id().equals(namespaceId)
         && !Namespace.ACCUMULO.id().equals(namespaceId)) {
       byte[] data = zoo.getData(zPath);
-      String jsonData = new String(data, StandardCharsets.UTF_8);
-      Type type = new TypeToken<Map<String,String>>() {}.getType();
-      Map<String,String> namespaceMap = gson.fromJson(jsonData, type);
+      Map<String,String> namespaceMap = deserialize(data);
       namespaceMap.put(namespaceId.canonical(), namespaceName);
-      String serializedJson = gson.toJson(namespaceMap);
-      updatedMap = serializedJson.getBytes(StandardCharsets.UTF_8);
+      updatedMap = serialize(namespaceMap);
     }
     return updatedMap;
   }
@@ -95,9 +90,7 @@ public class NamespaceMapping {
         currentNamespaceMap = emptySortedMap();
         currentNamespaceReverseMap = emptySortedMap();
       } else {
-        String jsonData = new String(data, StandardCharsets.UTF_8);
-        Type type = new TypeToken<Map<String,String>>() {}.getType();
-        Map<String,String> idToName = gson.fromJson(jsonData, type);
+        Map<String,String> idToName = deserialize(data);
         var converted = ImmutableSortedMap.<NamespaceId,String>naturalOrder();
         var convertedReverse = ImmutableSortedMap.<String,NamespaceId>naturalOrder();
         idToName.forEach((idString, name) -> {
