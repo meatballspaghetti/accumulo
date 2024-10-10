@@ -82,6 +82,7 @@ public class NamespaceMapping {
     final ZooCache zc = context.getZooCache();
     final String zPath = context.getZooKeeperRoot() + Constants.ZNAMESPACES;
     final ZooCache.ZcStat stat = new ZooCache.ZcStat();
+    zc.clear();
 
     // Retrieve the current data and stat from ZooCache
     byte[] data = zc.get(zPath, stat);
