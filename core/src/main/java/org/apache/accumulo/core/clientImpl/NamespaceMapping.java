@@ -18,10 +18,10 @@
  */
 package org.apache.accumulo.core.clientImpl;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Collections.emptySortedMap;
 
 import java.lang.reflect.Type;
-import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.SortedMap;
 
@@ -69,11 +69,11 @@ public class NamespaceMapping {
 
   public static byte[] serialize(Map<String,String> map) {
     String jsonData = gson.toJson(map);
-    return jsonData.getBytes(StandardCharsets.UTF_8);
+    return jsonData.getBytes(UTF_8);
   }
 
   public static Map<String,String> deserialize(byte[] data) {
-    String jsonData = new String(data, StandardCharsets.UTF_8);
+    String jsonData = new String(data, UTF_8);
     Type type = new TypeToken<Map<String,String>>() {}.getType();
     return gson.fromJson(jsonData, type);
   }

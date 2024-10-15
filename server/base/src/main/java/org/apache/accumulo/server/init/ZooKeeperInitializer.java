@@ -115,9 +115,9 @@ public class ZooKeeperInitializer {
         ZooUtil.NodeExistsPolicy.FAIL);
 
     TableManager.prepareNewNamespaceState(context, Namespace.DEFAULT.id(), Namespace.DEFAULT.name(),
-        ZooUtil.NodeExistsPolicy.FAIL);
+        ZooUtil.NodeExistsPolicy.OVERWRITE);
     TableManager.prepareNewNamespaceState(context, Namespace.ACCUMULO.id(),
-        Namespace.ACCUMULO.name(), ZooUtil.NodeExistsPolicy.FAIL);
+        Namespace.ACCUMULO.name(), ZooUtil.NodeExistsPolicy.OVERWRITE);
 
     NamespaceMapping.initializeNamespaceMap(zoo, zkInstanceRoot + Constants.ZNAMESPACES);
 
