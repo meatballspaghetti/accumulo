@@ -20,15 +20,7 @@ package org.apache.accumulo.manager.upgrade;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.apache.accumulo.manager.upgrade.Upgrader11to12.UPGRADE_FAMILIES;
-import static org.easymock.EasyMock.capture;
-import static org.easymock.EasyMock.createMock;
-import static org.easymock.EasyMock.eq;
-import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.expectLastCall;
-import static org.easymock.EasyMock.mock;
-import static org.easymock.EasyMock.newCapture;
-import static org.easymock.EasyMock.replay;
-import static org.easymock.EasyMock.verify;
+import static org.easymock.EasyMock.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -40,10 +32,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.UUID;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import org.apache.accumulo.core.Constants;
 import org.apache.accumulo.core.client.BatchWriter;
 import org.apache.accumulo.core.client.MutationsRejectedException;
+import org.apache.accumulo.core.clientImpl.NamespaceMapping;
 import org.apache.accumulo.core.data.ColumnUpdate;
 import org.apache.accumulo.core.data.InstanceId;
 import org.apache.accumulo.core.data.Key;
@@ -371,20 +366,20 @@ public class Upgrader11to12Test {
         ZooUtil.NodeMissingPolicy.SKIP);
     expectLastCall().once();
 
-    // Map<String,String> mockNamespaces = Map.of("ns1", "ns1name", "ns2", "ns2name");
-    // expect(zrw.getChildren(eq("/accumulo/" + iid.canonical() + Constants.ZNAMESPACES)))
-    // .andReturn(List.copyOf(mockNamespaces.keySet())).once();
-    // for (String ns : mockNamespaces.keySet()) {
-    // Supplier<String> pathMatcher = () -> eq(
-    // "/accumulo/" + iid.canonical() + Constants.ZNAMESPACES + ns + Constants.ZNAMESPACE_NAME);
-    // expect(zrw.getData(pathMatcher.get())).andReturn(mockNamespaces.get(ns).getBytes(UTF_8))
-    // .once();
-    // zrw.delete(pathMatcher.get());
-    // expectLastCall().once();
-    // }
-    // byte[] mapping = NamespaceMapping.serialize(mockNamespaces);
-    // expect(zrw.putPersistentData(eq("/accumulo/" + iid.canonical() + Constants.ZNAMESPACES),
-    // aryEq(mapping), NodeExistsPolicy.OVERWRITE)).once();
+    Map<String,String> mockNamespaces = Map.of("ns1", "ns1name", "ns2", "ns2name");
+    expect(zrw.getChildren(eq("/accumulo/" + iid.canonical() + Constants.ZNAMESPACES)))
+            .andReturn(List.copyOf(mockNamespaces.keySet())).once();
+    for (String ns : mockNamespaces.keySet()) {
+      Supplier<String> pathMatcher = () -> eq(
+              "/accumulo/" + iid.canonical() + Constants.ZNAMESPACES + ns + Constants.ZNAMESPACE_NAME);
+      expect(zrw.getData(pathMatcher.get())).andReturn(mockNamespaces.get(ns).getBytes(UTF_8))
+              .once();
+      zrw.delete(pathMatcher.get());
+      expectLastCall().once();
+    }
+    byte[] mapping = NamespaceMapping.serialize(mockNamespaces);
+    expect(zrw.putPersistentData(eq("/accumulo/" + iid.canonical() + Constants.ZNAMESPACES),
+            aryEq(mapping), ZooUtil.NodeExistsPolicy.OVERWRITE)).once();
 
     replay(context, zrw);
 

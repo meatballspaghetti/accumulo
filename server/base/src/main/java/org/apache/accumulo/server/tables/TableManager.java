@@ -75,8 +75,6 @@ public class TableManager {
     String zPath = Constants.ZROOT + "/" + instanceId + Constants.ZNAMESPACES;
 
     zoo.putPersistentData(zPath + "/" + namespaceId, new byte[0], existsPolicy);
-    // zoo.putPersistentData(zPath + Constants.ZNAMESPACE_NAME, namespace.getBytes(UTF_8),
-    // existsPolicy);
     zoo.putPersistentData(zPath,
         NamespaceMapping.writeNamespaceToMap(zoo, zPath, namespaceId, namespace), existsPolicy);
     var propKey = NamespacePropKey.of(instanceId, namespaceId);

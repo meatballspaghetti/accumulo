@@ -23,24 +23,21 @@ import static org.apache.accumulo.core.metadata.RootTable.ZROOT_TABLET;
 import static org.apache.accumulo.server.AccumuloDataVersion.METADATA_FILE_JSON_ENCODING;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
+import java.util.*;
 
+import org.apache.accumulo.core.Constants;
 import org.apache.accumulo.core.client.BatchDeleter;
 import org.apache.accumulo.core.client.BatchWriter;
 import org.apache.accumulo.core.client.IsolatedScanner;
 import org.apache.accumulo.core.client.MutationsRejectedException;
 import org.apache.accumulo.core.client.Scanner;
 import org.apache.accumulo.core.client.TableNotFoundException;
+import org.apache.accumulo.core.clientImpl.NamespaceMapping;
 import org.apache.accumulo.core.data.Key;
 import org.apache.accumulo.core.data.Mutation;
 import org.apache.accumulo.core.data.Range;
 import org.apache.accumulo.core.data.Value;
+import org.apache.accumulo.core.fate.zookeeper.ZooReaderWriter;
 import org.apache.accumulo.core.fate.zookeeper.ZooUtil;
 import org.apache.accumulo.core.metadata.AccumuloTable;
 import org.apache.accumulo.core.metadata.StoredTabletFile;
@@ -123,6 +120,17 @@ public class Upgrader11to12 implements Upgrader {
       // 2. loop to get each namespace name
       // 3. create mapping and save it in the new location
       // 4. loop to delete each of the old namespace name locations
+
+      String zPath = Constants.ZROOT + "/" + context.getInstanceID() + Constants.ZNAMESPACES;
+      ZooReaderWriter zoo = context.getZooReaderWriter();
+      Map<String,String> namespaceMap = new HashMap<>();
+      List<String> namespaceIdList = zoo.getChildren(zPath);
+      for (String namespaceId : namespaceIdList) {
+        String namespaceNamePath = zPath + "/" + namespaceId + Constants.ZNAMESPACE_NAME;
+        namespaceMap.put(namespaceId, new String(zoo.getData(namespaceNamePath), UTF_8));
+        zoo.delete(namespaceNamePath);
+      }
+      zoo.putPersistentData(zPath, NamespaceMapping.serialize(namespaceMap), ZooUtil.NodeExistsPolicy.OVERWRITE);
 
     } catch (InterruptedException ex) {
       Thread.currentThread().interrupt();
