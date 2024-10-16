@@ -123,12 +123,6 @@ public class Upgrader11to12 implements Upgrader {
         log.info("Root metadata in ZooKeeper after upgrade: {}", rtm.toJson());
       }
 
-      // TODO add upgrade code for namespace mapping
-      // 1. get namespace list from ZK
-      // 2. loop to get each namespace name
-      // 3. create mapping and save it in the new location
-      // 4. loop to delete each of the old namespace name locations
-
       String zPath = Constants.ZROOT + "/" + context.getInstanceID() + Constants.ZNAMESPACES;
       ZooReaderWriter zoo = context.getZooReaderWriter();
       Map<String,String> namespaceMap = new HashMap<>();
@@ -138,8 +132,8 @@ public class Upgrader11to12 implements Upgrader {
         namespaceMap.put(namespaceId, new String(zoo.getData(namespaceNamePath), UTF_8));
         zoo.delete(namespaceNamePath);
       }
-      zoo.putPersistentData(zPath, NamespaceMapping.serialize(namespaceMap),
-          ZooUtil.NodeExistsPolicy.OVERWRITE);
+      byte[] mapping = NamespaceMapping.serialize(namespaceMap);
+      zoo.putPersistentData(zPath, mapping, ZooUtil.NodeExistsPolicy.OVERWRITE);
 
     } catch (InterruptedException ex) {
       Thread.currentThread().interrupt();
