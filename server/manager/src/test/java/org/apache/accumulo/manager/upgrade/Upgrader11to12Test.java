@@ -380,8 +380,8 @@ public class Upgrader11to12Test {
     expect(zrw.getChildren(eq("/accumulo/" + iid.canonical() + Constants.ZNAMESPACES)))
         .andReturn(List.copyOf(mockNamespaces.keySet())).once();
     for (String ns : mockNamespaces.keySet()) {
-      Supplier<String> pathMatcher = () -> eq(
-          "/accumulo/" + iid.canonical() + Constants.ZNAMESPACES + "/" + ns + Constants.ZNAMESPACE_NAME);
+      Supplier<String> pathMatcher = () -> eq("/accumulo/" + iid.canonical() + Constants.ZNAMESPACES
+          + "/" + ns + Constants.ZNAMESPACE_NAME);
       expect(zrw.getData(pathMatcher.get())).andReturn(mockNamespaces.get(ns).getBytes(UTF_8))
           .once();
       zrw.delete(pathMatcher.get());
