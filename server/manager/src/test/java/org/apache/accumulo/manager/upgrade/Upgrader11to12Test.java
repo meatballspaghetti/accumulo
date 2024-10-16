@@ -337,6 +337,7 @@ public class Upgrader11to12Test {
   }
 
   @Test
+  @SuppressWarnings({"deprecation"})
   public void upgradeZooKeeperTest() throws Exception {
 
     // taken from an uno instance.

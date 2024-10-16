@@ -88,6 +88,7 @@ public class Upgrader11to12 implements Upgrader {
   public static final String ZTRACERS = "/tracers";
 
   @Override
+  @SuppressWarnings({"deprecation"})
   public void upgradeZookeeper(@NonNull ServerContext context) {
     log.debug("Upgrade ZooKeeper: upgrading to data version {}", METADATA_FILE_JSON_ENCODING);
     var zooRoot = ZooUtil.getRoot(context.getInstanceID());
