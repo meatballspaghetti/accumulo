@@ -22,6 +22,9 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.accumulo.core.Constants;
@@ -129,6 +132,43 @@ public class TestZKImpl {
           + Namespaces.getNamespaceName(context, NamespaceId.of("testNamespaceId")));
       System.out.println("getNamespaceName(test2): "
           + Namespaces.getNamespaceName(context, NamespaceId.of("testNamespaceId2")));
+
+      // Clear map
+      zooReaderWriter.putPersistentData(zPath, new byte[0], ZooUtil.NodeExistsPolicy.OVERWRITE);
+      System.out.println("\nCleared map: "
+              + new String(zoo.getData(zPath, false, null), UTF_8));
+
+      // Add names
+      zooReaderWriter.putPersistentData(zPath + "/" + NamespaceId.of("testNamespaceId") + Constants.ZNAMESPACE_NAME, "testNamespace".getBytes(UTF_8),
+              ZooUtil.NodeExistsPolicy.OVERWRITE);
+      zooReaderWriter.putPersistentData(zPath + "/" + NamespaceId.of("testNamespaceId2") + Constants.ZNAMESPACE_NAME, "testNamespace2".getBytes(UTF_8),
+              ZooUtil.NodeExistsPolicy.OVERWRITE);
+      zooReaderWriter.putPersistentData(zPath + "/" + NamespaceId.of("testNamespaceId3") + Constants.ZNAMESPACE_NAME, "testNamespace3".getBytes(UTF_8),
+              ZooUtil.NodeExistsPolicy.OVERWRITE);
+      zooReaderWriter.putPersistentData(zPath + "/" + NamespaceId.of("+default") + Constants.ZNAMESPACE_NAME, "".getBytes(UTF_8),
+              ZooUtil.NodeExistsPolicy.OVERWRITE);
+      zooReaderWriter.putPersistentData(zPath + "/" + NamespaceId.of("+accumulo") + Constants.ZNAMESPACE_NAME, "accumulo".getBytes(UTF_8),
+              ZooUtil.NodeExistsPolicy.OVERWRITE);
+      System.out.println("testnamespaceIds: " + zooReaderWriter.getChildren(zPath));
+      System.out.println("testnamespaceId name: " + new String(zooReaderWriter.getData(zPath + "/" + NamespaceId.of("testNamespaceId") + Constants.ZNAMESPACE_NAME), UTF_8));
+      System.out.println("testnamespaceId2 name: " + new String(zooReaderWriter.getData(zPath + "/" + NamespaceId.of("testNamespaceId2") + Constants.ZNAMESPACE_NAME), UTF_8));
+      System.out.println("testnamespaceId3 name: " + new String(zooReaderWriter.getData(zPath + "/" + NamespaceId.of("testNamespaceId3") + Constants.ZNAMESPACE_NAME), UTF_8));
+      System.out.println("+accumulo name: " + new String(zooReaderWriter.getData(zPath + "/" + NamespaceId.of("+accumulo") + Constants.ZNAMESPACE_NAME), UTF_8));
+      System.out.println("+default name: " + new String(zooReaderWriter.getData(zPath + "/" + NamespaceId.of("+default") + Constants.ZNAMESPACE_NAME), UTF_8));
+
+      // Make new map through upgrade code
+      Map<String,String> namespaceMap = new HashMap<>();
+      List<String> namespaceIdList = zooReaderWriter.getChildren(zPath);
+      for (String namespaceId : namespaceIdList) {
+        String namespaceNamePath = zPath + "/" + namespaceId + Constants.ZNAMESPACE_NAME;
+        namespaceMap.put(namespaceId, new String(zooReaderWriter.getData(namespaceNamePath), UTF_8));
+        zooReaderWriter.delete(namespaceNamePath);
+      }
+      zooReaderWriter.putPersistentData(zPath, NamespaceMapping.serialize(namespaceMap),
+              ZooUtil.NodeExistsPolicy.OVERWRITE);
+      System.out.println("Map after upgrade:"
+              + new String(zoo.getData(zPath, false, null), UTF_8));
+
     } catch (KeeperException | InterruptedException | IOException | IllegalArgumentException
         | NamespaceNotFoundException e) {
       e.printStackTrace();
