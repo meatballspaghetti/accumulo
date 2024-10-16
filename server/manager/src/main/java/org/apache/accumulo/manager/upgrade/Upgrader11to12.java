@@ -23,7 +23,14 @@ import static org.apache.accumulo.core.metadata.RootTable.ZROOT_TABLET;
 import static org.apache.accumulo.server.AccumuloDataVersion.METADATA_FILE_JSON_ENCODING;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
 
 import org.apache.accumulo.core.Constants;
 import org.apache.accumulo.core.client.BatchDeleter;
@@ -130,7 +137,8 @@ public class Upgrader11to12 implements Upgrader {
         namespaceMap.put(namespaceId, new String(zoo.getData(namespaceNamePath), UTF_8));
         zoo.delete(namespaceNamePath);
       }
-      zoo.putPersistentData(zPath, NamespaceMapping.serialize(namespaceMap), ZooUtil.NodeExistsPolicy.OVERWRITE);
+      zoo.putPersistentData(zPath, NamespaceMapping.serialize(namespaceMap),
+          ZooUtil.NodeExistsPolicy.OVERWRITE);
 
     } catch (InterruptedException ex) {
       Thread.currentThread().interrupt();
