@@ -21,7 +21,6 @@ package org.apache.accumulo.core.clientImpl;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Suppliers.memoize;
 import static com.google.common.base.Suppliers.memoizeWithExpiration;
-import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.apache.accumulo.core.metadata.schema.TabletMetadata.ColumnType.LOCATION;
@@ -126,7 +125,6 @@ public class ClientContext implements AccumuloClient {
   private static final Logger log = LoggerFactory.getLogger(ClientContext.class);
 
   private final ClientInfo info;
-  private InstanceId instanceId;
   private final ZooReader zooReader;
   private final ZooCache zooCache;
 
@@ -143,6 +141,7 @@ public class ClientContext implements AccumuloClient {
   private final Supplier<SslConnectionParams> sslSupplier;
   private final Supplier<ScanServerSelector> scanServerSelectorSupplier;
   private final NamespaceMapping namespaces;
+  private final Supplier<InstanceId> instanceIdSupplier;
   private TCredentials rpcCreds;
   private ThriftTransportPool thriftTransportPool;
   private ZookeeperLockChecker zkLockChecker;
@@ -224,9 +223,11 @@ public class ClientContext implements AccumuloClient {
       AccumuloConfiguration serverConf, UncaughtExceptionHandler ueh) {
     this.info = info;
     this.hadoopConf = info.getHadoopConf();
-    zooReader = new ZooReader(info.getZooKeepers(), info.getZooKeepersSessionTimeOut());
-    zooCache =
-        new ZooCacheFactory().getZooCache(info.getZooKeepers(), info.getZooKeepersSessionTimeOut());
+    instanceIdSupplier = memoize(() -> ZooUtil.getInstanceID(info.getZooKeepers(),
+        info.getZooKeepersSessionTimeOut(), info.getInstanceName()));
+    final String connectString = info.getZooKeepers();
+    zooReader = new ZooReader(connectString, info.getZooKeepersSessionTimeOut());
+    zooCache = new ZooCacheFactory().getZooCache(connectString, info.getZooKeepersSessionTimeOut());
     this.serverConf = serverConf;
     timeoutSupplier = memoizeWithExpiration(
         () -> getConfiguration().getTimeInMillis(Property.GENERAL_RPC_TIMEOUT), 100, MILLISECONDS);
@@ -540,35 +541,12 @@ public class ClientContext implements AccumuloClient {
     return Collections.singletonList(location);
   }
 
-  /**
-   * Returns a unique string that identifies this instance of accumulo.
-   *
-   * @return a UUID
-   */
   public InstanceId getInstanceID() {
     ensureOpen();
-    if (instanceId == null) {
-      // lookup by name
-      final String instanceName = info.getInstanceName();
-      String instanceNamePath = Constants.ZROOT + Constants.ZINSTANCES + "/" + instanceName;
-      byte[] data = zooCache.get(instanceNamePath);
-      if (data == null) {
-        throw new RuntimeException(
-            "Instance name " + instanceName + " does not exist in zookeeper. "
-                + "Run \"accumulo org.apache.accumulo.server.util.ListInstances\" to see a list.");
-      }
-      String instanceIdString = new String(data, UTF_8);
-      // verify that the instanceId found via the instanceName actually exists as an instance
-      if (zooCache.get(Constants.ZROOT + "/" + instanceIdString) == null) {
-        throw new RuntimeException("Instance id " + instanceIdString
-            + (instanceName == null ? "" : " pointed to by the name " + instanceName)
-            + " does not exist in zookeeper");
-      }
-      instanceId = InstanceId.of(instanceIdString);
-    }
-    return instanceId;
+    return instanceIdSupplier.get();
   }
 
+  @Deprecated
   public String getZooKeeperRoot() {
     ensureOpen();
     return ZooUtil.getRoot(getInstanceID());

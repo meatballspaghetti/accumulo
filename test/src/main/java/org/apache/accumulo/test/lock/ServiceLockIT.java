@@ -38,6 +38,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.LockSupport;
 
+import org.apache.accumulo.core.Constants;
 import org.apache.accumulo.core.data.InstanceId;
 import org.apache.accumulo.core.fate.zookeeper.ZooReaderWriter;
 import org.apache.accumulo.core.fate.zookeeper.ZooSession;
@@ -81,7 +82,7 @@ public class ServiceLockIT {
   @BeforeAll
   public static void setup() throws Exception {
     szk = new ZooKeeperTestingServer(tempDir);
-    szk.initPaths("/accumulo/" + InstanceId.of(UUID.randomUUID()));
+    szk.initPaths(Constants.ZROOT + "/" + InstanceId.of(UUID.randomUUID()));
   }
 
   @AfterAll

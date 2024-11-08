@@ -20,6 +20,7 @@ package org.apache.accumulo.core.fate.zookeeper;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
+import java.io.IOException;
 import java.math.BigInteger;
 import java.security.NoSuchAlgorithmException;
 import java.time.Instant;
@@ -111,6 +112,35 @@ public class ZooUtil {
 
   public static String getRoot(final InstanceId instanceId) {
     return Constants.ZROOT + "/" + instanceId;
+  }
+
+  /**
+   * Returns a unique string that identifies this instance of accumulo.
+   */
+  public static InstanceId getInstanceID(String zooKeepers, int zkSessionTimeout,
+      String instanceName) {
+    // lookup by name
+    String instanceIdString = null;
+    try (var zoo = new ZooKeeper(zooKeepers, zkSessionTimeout, null)) {
+      String instanceNamePath = Constants.ZROOT + Constants.ZINSTANCES + "/" + instanceName;
+      byte[] data = zoo.getData(instanceNamePath, false, null);
+      if (data == null) {
+        throw new RuntimeException(
+            "Instance name " + instanceName + " does not exist in zookeeper. "
+                + "Run \"accumulo org.apache.accumulo.server.util.ListInstances\" to see a list.");
+      }
+      instanceIdString = new String(data, UTF_8);
+      // verify that the instanceId found via the instanceName actually exists as an instance
+      if (zoo.getData(Constants.ZROOT + "/" + instanceIdString, false, null) == null) {
+        throw new RuntimeException("Instance id " + instanceIdString
+            + (instanceName == null ? "" : " pointed to by the name " + instanceName)
+            + " does not exist in zookeeper");
+      }
+    } catch (IOException | KeeperException | InterruptedException e) {
+      throw new RuntimeException("Unable to get instanceId for the instance name " + instanceName,
+          e);
+    }
+    return InstanceId.of(instanceIdString);
   }
 
   /**
