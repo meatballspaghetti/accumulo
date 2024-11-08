@@ -138,6 +138,7 @@ public class ClientContext implements AccumuloClient {
   private final Supplier<SslConnectionParams> sslSupplier;
   private final Supplier<ScanServerSelector> scanServerSelectorSupplier;
   private final NamespaceMapping namespaces;
+  private final Supplier<InstanceId> instanceIdSupplier;
   private TCredentials rpcCreds;
   private ThriftTransportPool thriftTransportPool;
   private ZookeeperLockChecker zkLockChecker;
@@ -553,6 +554,7 @@ public class ClientContext implements AccumuloClient {
     return info.getInstanceId();
   }
 
+  @Deprecated
   public String getZooKeeperRoot() {
     ensureOpen();
     return ZooUtil.getRoot(getInstanceID());
