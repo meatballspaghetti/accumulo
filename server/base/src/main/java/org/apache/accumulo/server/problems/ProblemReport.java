@@ -161,13 +161,13 @@ public class ProblemReport {
 
   void removeFromZooKeeper(ZooReaderWriter zoorw, ServerContext context)
       throws IOException, KeeperException, InterruptedException {
-    String zpath = getZPath(context.getZooKeeperRoot());
+    String zpath = getZPath("/");
     zoorw.recursiveDelete(zpath, NodeMissingPolicy.SKIP);
   }
 
   void saveToZooKeeper(ServerContext context)
       throws IOException, KeeperException, InterruptedException {
-    context.getZooReaderWriter().putPersistentData(getZPath(context.getZooKeeperRoot()), encode(),
+    context.getZooReaderWriter().putPersistentData(getZPath("/"), encode(),
         NodeExistsPolicy.OVERWRITE);
   }
 
@@ -194,7 +194,7 @@ public class ProblemReport {
     String problemType = dis.readUTF();
     String resource = dis.readUTF();
 
-    String zpath = context.getZooKeeperRoot() + Constants.ZPROBLEMS + "/" + node;
+    String zpath = Constants.ZPROBLEMS + "/" + node;
     byte[] enc = context.getZooReaderWriter().getData(zpath);
 
     return new ProblemReport(tableId, ProblemType.valueOf(problemType), resource, enc);

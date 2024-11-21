@@ -79,7 +79,7 @@ public class ServerInfo implements ClientInfo {
               + "Run \"accumulo org.apache.accumulo.server.util.ListInstances\" to see a list.");
     }
     instanceID = InstanceId.of(new String(iidb, UTF_8));
-    if (zooCache.get(ZooUtil.getRoot(instanceID)) == null) {
+    if (zooCache.get("/") == null) {
       if (instanceName == null) {
         throw new IllegalStateException(
             "Instance id " + instanceID + " does not exist in zookeeper");

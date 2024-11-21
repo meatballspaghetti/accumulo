@@ -61,7 +61,7 @@ public class CompactionDriverTest {
     expect(ctx.getZooReaderWriter()).andReturn(zrw).anyTimes();
     expect(manager.getContext()).andReturn(ctx).anyTimes();
 
-    final String zCancelID = CompactionDriver.createCompactionCancellationPath(instance, tableId);
+    final String zCancelID = CompactionDriver.createCompactionCancellationPath(tableId);
     expect(zrw.getData(zCancelID)).andReturn(Long.toString(cancelId).getBytes(UTF_8));
 
     replay(manager, ctx, zrw);
@@ -99,10 +99,10 @@ public class CompactionDriverTest {
     expect(ctx.getZooReaderWriter()).andReturn(zrw).anyTimes();
     expect(manager.getContext()).andReturn(ctx).anyTimes();
 
-    final String zCancelID = CompactionDriver.createCompactionCancellationPath(instance, tableId);
+    final String zCancelID = CompactionDriver.createCompactionCancellationPath(tableId);
     expect(zrw.getData(zCancelID)).andReturn(Long.toString(cancelId).getBytes(UTF_8));
 
-    String deleteMarkerPath = PreDeleteTable.createDeleteMarkerPath(instance, tableId);
+    String deleteMarkerPath = PreDeleteTable.createDeleteMarkerPath(tableId);
     expect(zrw.exists(deleteMarkerPath)).andReturn(true);
 
     replay(manager, ctx, zrw);

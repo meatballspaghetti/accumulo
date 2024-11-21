@@ -142,7 +142,6 @@ public class ClientContext implements AccumuloClient {
   private final Supplier<ScanServerSelector> scanServerSelectorSupplier;
   private final Supplier<InstanceId> instanceIdSupplier;
   private final NamespaceMapping namespaces;
-  private final Supplier<InstanceId> instanceIdSupplier;
   private TCredentials rpcCreds;
   private ThriftTransportPool thriftTransportPool;
   private ZookeeperLockChecker zkLockChecker;
@@ -226,7 +225,7 @@ public class ClientContext implements AccumuloClient {
     this.hadoopConf = info.getHadoopConf();
     instanceIdSupplier = memoize(() -> ZooUtil.getInstanceID(info.getZooKeepers(),
         info.getZooKeepersSessionTimeOut(), info.getInstanceName()));
-    final String connectString = info.getZooKeepers();
+    final String connectString = info.getZooKeepers() + Constants.ZROOT + "/" + instanceIdSupplier;
     zooReader = new ZooReader(connectString, info.getZooKeepersSessionTimeOut());
     zooCache = new ZooCacheFactory().getZooCache(connectString, info.getZooKeepersSessionTimeOut());
     this.serverConf = serverConf;
@@ -512,7 +511,7 @@ public class ClientContext implements AccumuloClient {
    */
   public List<String> getManagerLocations() {
     ensureOpen();
-    var zLockManagerPath = ServiceLock.path(getZooKeeperRoot() + Constants.ZMANAGER_LOCK);
+    var zLockManagerPath = ServiceLock.path(Constants.ZMANAGER_LOCK);
 
     Timer timer = null;
 

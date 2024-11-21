@@ -61,19 +61,18 @@ public class ServiceStatusCmd {
 
     ZooReader zooReader = context.getZooReader();
 
-    final String zooRoot = context.getZooKeeperRoot();
-    LOG.trace("zooRoot: {}", zooRoot);
+    LOG.trace("zooRoot: {}", "/");
 
     final Map<ServiceStatusReport.ReportKey,StatusSummary> services = new TreeMap<>();
 
-    services.put(ServiceStatusReport.ReportKey.MANAGER, getManagerStatus(zooReader, zooRoot));
-    services.put(ServiceStatusReport.ReportKey.MONITOR, getMonitorStatus(zooReader, zooRoot));
-    services.put(ServiceStatusReport.ReportKey.T_SERVER, getTServerStatus(zooReader, zooRoot));
-    services.put(ServiceStatusReport.ReportKey.S_SERVER, getScanServerStatus(zooReader, zooRoot));
+    services.put(ServiceStatusReport.ReportKey.MANAGER, getManagerStatus(zooReader, "/"));
+    services.put(ServiceStatusReport.ReportKey.MONITOR, getMonitorStatus(zooReader, "/"));
+    services.put(ServiceStatusReport.ReportKey.T_SERVER, getTServerStatus(zooReader, "/"));
+    services.put(ServiceStatusReport.ReportKey.S_SERVER, getScanServerStatus(zooReader, "/"));
     services.put(ServiceStatusReport.ReportKey.COORDINATOR,
-        getCoordinatorStatus(zooReader, zooRoot));
-    services.put(ServiceStatusReport.ReportKey.COMPACTOR, getCompactorStatus(zooReader, zooRoot));
-    services.put(ServiceStatusReport.ReportKey.GC, getGcStatus(zooReader, zooRoot));
+        getCoordinatorStatus(zooReader, "/"));
+    services.put(ServiceStatusReport.ReportKey.COMPACTOR, getCompactorStatus(zooReader, "/"));
+    services.put(ServiceStatusReport.ReportKey.GC, getGcStatus(zooReader, "/"));
 
     ServiceStatusReport report = new ServiceStatusReport(services, opts.noHosts);
 

@@ -101,9 +101,8 @@ public class ChangeSecret {
   private static void verifyAccumuloIsDown(ServerContext context, String oldPassword)
       throws Exception {
     ZooReader zooReader = context.getZooReader().asWriter(oldPassword);
-    String root = context.getZooKeeperRoot();
     final List<String> ephemerals = new ArrayList<>();
-    recurse(zooReader, root, (zoo, path) -> {
+    recurse(zooReader, "/", (zoo, path) -> {
       Stat stat = zoo.getStatus(path);
       if (stat.getEphemeralOwner() != 0) {
         ephemerals.add(path);
@@ -123,8 +122,7 @@ public class ChangeSecret {
     final ZooReaderWriter orig = context.getZooReader().asWriter(oldPass);
     final ZooReaderWriter new_ = context.getZooReader().asWriter(newPass);
 
-    String root = context.getZooKeeperRoot();
-    recurse(orig, root, (zoo, path) -> {
+    recurse(orig, "/", (zoo, path) -> {
       String newPath = path.replace(context.getInstanceID().canonical(), newInstanceId.canonical());
       byte[] data = zoo.getData(path);
       List<ACL> acls = orig.getZooKeeper().getACL(path, new Stat());
