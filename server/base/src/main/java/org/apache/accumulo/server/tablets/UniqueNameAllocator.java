@@ -50,7 +50,7 @@ public class UniqueNameAllocator {
 
   public UniqueNameAllocator(ServerContext context) {
     this.context = context;
-    nextNamePath = context.getZooKeeperRoot() + Constants.ZNEXT_FILE;
+    nextNamePath = Constants.ZNEXT_FILE;
   }
 
   public synchronized String getNextName() {

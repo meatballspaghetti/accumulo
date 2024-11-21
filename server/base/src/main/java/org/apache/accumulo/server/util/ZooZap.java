@@ -109,29 +109,26 @@ public class ZooZap implements KeywordExecutable {
       var zrw = zk.asReaderWriter();
 
       if (opts.zapManager) {
-        String managerLockPath = ZooUtil.getRoot(iid) + Constants.ZMANAGER_LOCK;
-
         try {
-          zapDirectory(zrw, managerLockPath, opts);
+          zapDirectory(zrw, Constants.ZMANAGER_LOCK, opts);
         } catch (KeeperException | InterruptedException e) {
           e.printStackTrace();
         }
       }
 
       if (opts.zapTservers) {
-        String tserversPath = ZooUtil.getRoot(iid) + Constants.ZTSERVERS;
         try {
-          List<String> children = zrw.getChildren(tserversPath);
+          List<String> children = zrw.getChildren(Constants.ZTSERVERS);
           for (String child : children) {
-            message("Deleting " + tserversPath + "/" + child + " from zookeeper", opts);
+            message("Deleting " + Constants.ZTSERVERS + "/" + child + " from zookeeper", opts);
 
             if (opts.zapManager) {
-              zrw.recursiveDelete(tserversPath + "/" + child, NodeMissingPolicy.SKIP);
+              zrw.recursiveDelete(Constants.ZTSERVERS + "/" + child, NodeMissingPolicy.SKIP);
             } else {
-              var zLockPath = ServiceLock.path(tserversPath + "/" + child);
+              var zLockPath = ServiceLock.path(Constants.ZTSERVERS + "/" + child);
               if (!zrw.getChildren(zLockPath.toString()).isEmpty()) {
                 if (!ServiceLock.deleteLock(zrw, zLockPath, "tserver")) {
-                  message("Did not delete " + tserversPath + "/" + child, opts);
+                  message("Did not delete " + Constants.ZTSERVERS + "/" + child, opts);
                 }
               }
             }
@@ -142,10 +139,9 @@ public class ZooZap implements KeywordExecutable {
       }
 
       if (opts.zapCoordinators) {
-        final String coordinatorPath = ZooUtil.getRoot(iid) + Constants.ZCOORDINATOR_LOCK;
         try {
-          if (zrw.exists(coordinatorPath)) {
-            zapDirectory(zrw, coordinatorPath, opts);
+          if (zrw.exists(Constants.ZCOORDINATOR_LOCK)) {
+            zapDirectory(zrw, Constants.ZCOORDINATOR_LOCK, opts);
           }
         } catch (KeeperException | InterruptedException e) {
           log.error("Error deleting coordinator from zookeeper, {}", e.getMessage(), e);
@@ -153,13 +149,12 @@ public class ZooZap implements KeywordExecutable {
       }
 
       if (opts.zapCompactors) {
-        String compactorsBasepath = ZooUtil.getRoot(iid) + Constants.ZCOMPACTORS;
         try {
-          if (zrw.exists(compactorsBasepath)) {
-            List<String> queues = zrw.getChildren(compactorsBasepath);
+          if (zrw.exists(Constants.ZCOMPACTORS)) {
+            List<String> queues = zrw.getChildren(Constants.ZCOMPACTORS);
             for (String queue : queues) {
-              message("Deleting " + compactorsBasepath + "/" + queue + " from zookeeper", opts);
-              zrw.recursiveDelete(compactorsBasepath + "/" + queue, NodeMissingPolicy.SKIP);
+              message("Deleting " + Constants.ZCOMPACTORS + "/" + queue + " from zookeeper", opts);
+              zrw.recursiveDelete(Constants.ZCOMPACTORS + "/" + queue, NodeMissingPolicy.SKIP);
             }
           }
         } catch (KeeperException | InterruptedException e) {
@@ -169,14 +164,13 @@ public class ZooZap implements KeywordExecutable {
       }
 
       if (opts.zapScanServers) {
-        String sserversPath = ZooUtil.getRoot(iid) + Constants.ZSSERVERS;
         try {
-          if (zrw.exists(sserversPath)) {
-            List<String> children = zrw.getChildren(sserversPath);
+          if (zrw.exists(Constants.ZSSERVERS)) {
+            List<String> children = zrw.getChildren(Constants.ZSSERVERS);
             for (String child : children) {
-              message("Deleting " + sserversPath + "/" + child + " from zookeeper", opts);
+              message("Deleting " + Constants.ZSSERVERS + "/" + child + " from zookeeper", opts);
 
-              var zLockPath = ServiceLock.path(sserversPath + "/" + child);
+              var zLockPath = ServiceLock.path(Constants.ZSSERVERS + "/" + child);
               if (!zrw.getChildren(zLockPath.toString()).isEmpty()) {
                 ServiceLock.deleteLock(zrw, zLockPath);
               }

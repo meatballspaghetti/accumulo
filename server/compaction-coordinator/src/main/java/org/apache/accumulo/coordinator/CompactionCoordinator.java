@@ -212,11 +212,10 @@ public class CompactionCoordinator extends AbstractServer
     LOG.info("trying to get coordinator lock");
 
     final String coordinatorClientAddress = ExternalCompactionUtil.getHostPortString(clientAddress);
-    final String lockPath = getContext().getZooKeeperRoot() + Constants.ZCOORDINATOR_LOCK;
     final UUID zooLockUUID = UUID.randomUUID();
 
     coordinatorLock =
-        new ServiceLock(getContext().getZooSession(), ServiceLock.path(lockPath), zooLockUUID);
+        new ServiceLock(getContext().getZooSession(), ServiceLock.path(Constants.ZCOORDINATOR_LOCK), zooLockUUID);
     while (true) {
 
       CoordinatorLockWatcher coordinatorLockWatcher = new CoordinatorLockWatcher();
@@ -730,15 +729,14 @@ public class CompactionCoordinator extends AbstractServer
   }
 
   private void cleanUpCompactors() {
-    final String compactorQueuesPath = getContext().getZooKeeperRoot() + Constants.ZCOMPACTORS;
 
     var zoorw = getContext().getZooSession().asReaderWriter();
 
     try {
-      var queues = zoorw.getChildren(compactorQueuesPath);
+      var queues = zoorw.getChildren(Constants.ZCOMPACTORS);
 
       for (String queue : queues) {
-        String qpath = compactorQueuesPath + "/" + queue;
+        String qpath = Constants.ZCOMPACTORS + "/" + queue;
 
         var compactors = zoorw.getChildren(qpath);
 
@@ -747,8 +745,8 @@ public class CompactionCoordinator extends AbstractServer
         }
 
         for (String compactor : compactors) {
-          String cpath = compactorQueuesPath + "/" + queue + "/" + compactor;
-          var lockNodes = zoorw.getChildren(compactorQueuesPath + "/" + queue + "/" + compactor);
+          String cpath = Constants.ZCOMPACTORS + "/" + queue + "/" + compactor;
+          var lockNodes = zoorw.getChildren(Constants.ZCOMPACTORS + "/" + queue + "/" + compactor);
           if (lockNodes.isEmpty()) {
             deleteEmpty(zoorw, cpath);
           }

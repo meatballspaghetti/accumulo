@@ -119,7 +119,7 @@ public class ServerContext extends ClientContext {
     @SuppressWarnings("resource")
     var tmpPropStore = memoize(() -> ZooPropStore.initialize(getInstanceID(), getZooSession()));
     propStore = tmpPropStore;
-    zkUserPath = memoize(() -> ZooUtil.getRoot(getInstanceID()) + Constants.ZUSERS);
+    zkUserPath = memoize(() -> Constants.ZUSERS);
 
     tableManager = memoize(() -> new TableManager(this));
     nameAllocator = memoize(() -> new UniqueNameAllocator(this));

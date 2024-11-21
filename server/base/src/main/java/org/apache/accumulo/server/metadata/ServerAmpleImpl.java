@@ -94,9 +94,8 @@ public class ServerAmpleImpl extends AmpleImpl implements Ample {
   }
 
   private void mutateRootGcCandidates(Consumer<RootGcCandidates> mutator) {
-    String zpath = context.getZooKeeperRoot() + ZROOT_TABLET_GC_CANDIDATES;
     try {
-      context.getZooSession().asReaderWriter().mutateOrCreate(zpath, new byte[0], currVal -> {
+      context.getZooSession().asReaderWriter().mutateOrCreate(ZROOT_TABLET_GC_CANDIDATES, new byte[0], currVal -> {
         String currJson = new String(currVal, UTF_8);
         RootGcCandidates rgcc = new RootGcCandidates(currJson);
         log.debug("Root GC candidates before change : {}", currJson);
@@ -107,7 +106,7 @@ public class ServerAmpleImpl extends AmpleImpl implements Ample {
           log.warn(
               "Root tablet deletion candidates stored in ZK at {} are getting large ({} bytes), is"
                   + " Accumulo GC process running?  Large nodes may cause problems for Zookeeper!",
-              zpath, newJson.length());
+                  ZROOT_TABLET_GC_CANDIDATES, newJson.length());
         }
         return newJson.getBytes(UTF_8);
       });
@@ -251,7 +250,7 @@ public class ServerAmpleImpl extends AmpleImpl implements Ample {
       byte[] jsonBytes;
       try {
         jsonBytes =
-            zooReader.getData(context.getZooKeeperRoot() + RootTable.ZROOT_TABLET_GC_CANDIDATES);
+            zooReader.getData(RootTable.ZROOT_TABLET_GC_CANDIDATES);
       } catch (KeeperException | InterruptedException e) {
         throw new IllegalStateException(e);
       }

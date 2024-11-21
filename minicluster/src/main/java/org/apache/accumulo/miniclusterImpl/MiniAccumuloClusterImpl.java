@@ -675,14 +675,12 @@ public class MiniAccumuloClusterImpl implements AccumuloCluster {
         throw new IllegalStateException("Unable to find instance id from zookeeper.");
       }
 
-      String rootPath = ZooUtil.getRoot(instanceId);
       int tsActualCount = 0;
       try {
         while (tsActualCount < tsExpectedCount) {
           tsActualCount = 0;
-          String tserverPath = rootPath + Constants.ZTSERVERS;
-          for (String child : rdr.getChildren(tserverPath)) {
-            if (rdr.getChildren(tserverPath + "/" + child).isEmpty()) {
+          for (String child : rdr.getChildren(Constants.ZTSERVERS, null)) {
+            if (rdr.getChildren(Constants.ZTSERVERS + "/" + child, null).isEmpty()) {
               log.info("TServer " + tsActualCount + " not yet present in ZooKeeper");
             } else {
               tsActualCount++;
@@ -696,7 +694,7 @@ public class MiniAccumuloClusterImpl implements AccumuloCluster {
       }
 
       try {
-        while (rdr.getChildren(rootPath + Constants.ZMANAGER_LOCK).isEmpty()) {
+        while (rdr.getChildren(Constants.ZMANAGER_LOCK, null).isEmpty()) {
           log.info("Manager not yet present in ZooKeeper");
           Thread.sleep(500);
         }
@@ -705,7 +703,7 @@ public class MiniAccumuloClusterImpl implements AccumuloCluster {
       }
 
       try {
-        while (rdr.getChildren(rootPath + Constants.ZGC_LOCK).isEmpty()) {
+        while (rdr.getChildren(Constants.ZGC_LOCK, null).isEmpty()) {
           log.info("GC not yet present in ZooKeeper");
           Thread.sleep(500);
         }

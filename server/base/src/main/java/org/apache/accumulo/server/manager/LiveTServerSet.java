@@ -88,7 +88,7 @@ public class LiveTServerSet implements ZooCacheWatcher {
     }
 
     private String lockString(ServiceLock mlock) {
-      return mlock.getLockID().serialize(context.getZooKeeperRoot() + Constants.ZMANAGER_LOCK);
+      return mlock.getLockID().serialize(Constants.ZMANAGER_LOCK);
     }
 
     private void loadTablet(TabletManagementClientService.Client client, ServiceLock lock,
@@ -261,15 +261,13 @@ public class LiveTServerSet implements ZooCacheWatcher {
       final Set<TServerInstance> updates = new HashSet<>();
       final Set<TServerInstance> doomed = new HashSet<>();
 
-      final String path = context.getZooKeeperRoot() + Constants.ZTSERVERS;
-
       HashSet<String> all = new HashSet<>(current.keySet());
-      all.addAll(getZooCache().getChildren(path));
+      all.addAll(getZooCache().getChildren(Constants.ZTSERVERS));
 
       locklessServers.keySet().retainAll(all);
 
       for (String zPath : all) {
-        checkServer(updates, doomed, path, zPath);
+        checkServer(updates, doomed, Constants.ZTSERVERS, zPath);
       }
 
       // log.debug("Current: " + current.keySet());
@@ -355,10 +353,8 @@ public class LiveTServerSet implements ZooCacheWatcher {
           final Set<TServerInstance> updates = new HashSet<>();
           final Set<TServerInstance> doomed = new HashSet<>();
 
-          final String path = context.getZooKeeperRoot() + Constants.ZTSERVERS;
-
           try {
-            checkServer(updates, doomed, path, server);
+            checkServer(updates, doomed, Constants.ZTSERVERS, server);
             this.cback.update(this, doomed, updates);
           } catch (Exception ex) {
             log.error("Exception", ex);
@@ -431,7 +427,7 @@ public class LiveTServerSet implements ZooCacheWatcher {
     currentInstances.remove(server);
 
     log.info("Removing zookeeper lock for {}", server);
-    String fullpath = context.getZooKeeperRoot() + Constants.ZTSERVERS + "/" + zPath;
+    String fullpath = Constants.ZTSERVERS + "/" + zPath;
     try {
       context.getZooSession().asReaderWriter().recursiveDelete(fullpath, SKIP);
     } catch (Exception e) {

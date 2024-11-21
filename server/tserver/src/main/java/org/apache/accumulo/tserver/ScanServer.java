@@ -329,7 +329,7 @@ public class ScanServer extends AbstractServer
     try {
 
       var zLockPath = ServiceLock.path(
-          getContext().getZooKeeperRoot() + Constants.ZSSERVERS + "/" + getClientAddressString());
+          Constants.ZSSERVERS + "/" + getClientAddressString());
 
       try {
         // Old zk nodes can be cleaned up by ZooZap

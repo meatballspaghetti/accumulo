@@ -347,8 +347,9 @@ public class TabletServer extends AbstractServer implements TabletHostingServer 
     if (aconf.getBoolean(Property.INSTANCE_RPC_SASL_ENABLED)) {
       log.info("SASL is enabled, creating ZooKeeper watcher for AuthenticationKeys");
       // Watcher to notice new AuthenticationKeys which enable delegation tokens
-      authKeyWatcher = new ZooAuthenticationKeyWatcher(context.getSecretManager(),
-          context.getZooSession(), context.getZooKeeperRoot() + Constants.ZDELEGATION_TOKEN_KEYS);
+      authKeyWatcher =
+          new ZooAuthenticationKeyWatcher(context.getSecretManager(), context.getZooSession(),
+              Constants.ZDELEGATION_TOKEN_KEYS);
     } else {
       authKeyWatcher = null;
     }
@@ -614,7 +615,7 @@ public class TabletServer extends AbstractServer implements TabletHostingServer 
     ZooReaderWriter zoo = getContext().getZooSession().asReaderWriter();
     try {
       var zLockPath = ServiceLock.path(
-          getContext().getZooKeeperRoot() + Constants.ZTSERVERS + "/" + getClientAddressString());
+          Constants.ZTSERVERS + "/" + getClientAddressString());
 
       try {
         zoo.putPersistentData(zLockPath.toString(), new byte[] {}, NodeExistsPolicy.SKIP);
@@ -661,7 +662,7 @@ public class TabletServer extends AbstractServer implements TabletHostingServer 
 
         if (tabletServerLock.tryLock(lw, new ServiceLockData(descriptors))) {
           lockID = tabletServerLock.getLockID()
-              .serialize(getContext().getZooKeeperRoot() + Constants.ZTSERVERS + "/");
+              .serialize(Constants.ZTSERVERS + "/");
           lockSessionId = tabletServerLock.getSessionId();
           log.debug("Obtained tablet server lock {} {}", tabletServerLock.getLockPath(),
               getTabletSession());
