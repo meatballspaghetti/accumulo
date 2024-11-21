@@ -118,7 +118,7 @@ public class ServerContext extends ClientContext {
     serverDirs = info.getServerDirs();
 
     propStore = memoize(() -> ZooPropStore.initialize(getInstanceID(), getZooReaderWriter()));
-    zkUserPath = memoize(() -> Constants.ZROOT + "/" + getInstanceID() + Constants.ZUSERS);
+    zkUserPath = memoize(() -> Constants.ZUSERS);
 
     tableManager = memoize(() -> new TableManager(this));
     nameAllocator = memoize(() -> new UniqueNameAllocator(this));

@@ -63,13 +63,12 @@ public class PreUpgradeValidation {
     final AtomicBoolean aclErrorOccurred = new AtomicBoolean(false);
     final ZooReaderWriter zrw = context.getZooReaderWriter();
     final ZooKeeper zk = zrw.getZooKeeper();
-    final String rootPath = context.getZooKeeperRoot();
     final Set<String> users = Set.of("accumulo", "anyone");
 
     log.info("Starting validation on ZooKeeper ACLs");
 
     try {
-      ZKUtil.visitSubTreeDFS(zk, rootPath, false, (rc, path, ctx, name) -> {
+      ZKUtil.visitSubTreeDFS(zk, "/", false, (rc, path, ctx, name) -> {
         try {
           final List<ACL> acls = zk.getACL(path, new Stat());
           if (!hasAllPermissions(users, acls)) {
@@ -90,7 +89,7 @@ public class PreUpgradeValidation {
                 + "for instructions on how to fix.");
       }
     } catch (KeeperException | InterruptedException e) {
-      throw new RuntimeException("Upgrade Failed! Error validating nodes under " + rootPath, e);
+      throw new RuntimeException("Upgrade Failed! Error validating nodes under root", e);
     }
     log.info("Successfully completed validation on ZooKeeper ACLs");
   }

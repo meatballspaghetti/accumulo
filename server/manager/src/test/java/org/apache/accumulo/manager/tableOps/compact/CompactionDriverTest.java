@@ -58,7 +58,7 @@ public class CompactionDriverTest {
     EasyMock.expect(manager.getContext()).andReturn(ctx);
     EasyMock.expect(ctx.getZooReaderWriter()).andReturn(zrw);
 
-    final String zCancelID = CompactionDriver.createCompactionCancellationPath(instance, tableId);
+    final String zCancelID = CompactionDriver.createCompactionCancellationPath(tableId);
     EasyMock.expect(zrw.getData(zCancelID)).andReturn(Long.toString(cancelId).getBytes(UTF_8));
 
     EasyMock.replay(manager, ctx, zrw);
@@ -96,10 +96,10 @@ public class CompactionDriverTest {
     EasyMock.expect(manager.getContext()).andReturn(ctx);
     EasyMock.expect(ctx.getZooReaderWriter()).andReturn(zrw);
 
-    final String zCancelID = CompactionDriver.createCompactionCancellationPath(instance, tableId);
+    final String zCancelID = CompactionDriver.createCompactionCancellationPath(tableId);
     EasyMock.expect(zrw.getData(zCancelID)).andReturn(Long.toString(cancelId).getBytes(UTF_8));
 
-    String deleteMarkerPath = PreDeleteTable.createDeleteMarkerPath(instance, tableId);
+    String deleteMarkerPath = PreDeleteTable.createDeleteMarkerPath(tableId);
     EasyMock.expect(zrw.exists(deleteMarkerPath)).andReturn(true);
 
     EasyMock.replay(manager, ctx, zrw);

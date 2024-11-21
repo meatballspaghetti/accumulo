@@ -55,8 +55,6 @@ public class ZKPermHandler implements PermissionHandler {
 
   private ZooReaderWriter zoo;
   private String zkUserPath;
-  private String ZKTablePath;
-  private String ZKNamespacePath;
   private ZooCache zooCache;
   private final String ZKUserSysPerms = "/System";
   private final String ZKUserTablePerms = "/Tables";
@@ -66,10 +64,7 @@ public class ZKPermHandler implements PermissionHandler {
   public void initialize(ServerContext context) {
     zooCache = new ZooCache(context.getZooReader(), null);
     zoo = context.getZooReaderWriter();
-    InstanceId instanceId = context.getInstanceID();
     zkUserPath = context.zkUserPath();
-    ZKTablePath = ZKSecurityTool.getInstancePath(instanceId) + "/tables";
-    ZKNamespacePath = ZKSecurityTool.getInstancePath(instanceId) + "/namespaces";
   }
 
   @Override
@@ -85,7 +80,7 @@ public class ZKPermHandler implements PermissionHandler {
         // maybe the table was just deleted?
         try {
           // check for existence:
-          zoo.getData(ZKTablePath + "/" + table);
+          zoo.getData("/tables/" + table);
           // it's there, you don't have permission
           return false;
         } catch (InterruptedException ex) {
@@ -134,7 +129,7 @@ public class ZKPermHandler implements PermissionHandler {
         // maybe the namespace was just deleted?
         try {
           // check for existence:
-          zoo.getData(ZKNamespacePath + "/" + namespace);
+          zoo.getData("/namespaces/" + namespace);
           // it's there, you don't have permission
           return false;
         } catch (InterruptedException ex) {

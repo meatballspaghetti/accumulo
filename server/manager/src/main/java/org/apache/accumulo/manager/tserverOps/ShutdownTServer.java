@@ -97,10 +97,10 @@ public class ShutdownTServer extends ManagerRepo {
     if (force) {
       ZooReaderWriter zoo = manager.getContext().getZooReaderWriter();
       var path =
-          ServiceLock.path(manager.getZooKeeperRoot() + Constants.ZTSERVERS + "/" + hostAndPort);
+          ServiceLock.path(Constants.ZTSERVERS + "/" + hostAndPort);
       ServiceLock.deleteLock(zoo, path);
       path = ServiceLock
-          .path(manager.getZooKeeperRoot() + Constants.ZDEADTSERVERS + "/" + hostAndPort);
+          .path(Constants.ZDEADTSERVERS + "/" + hostAndPort);
       zoo.putPersistentData(path.toString(), "forced down".getBytes(UTF_8),
           NodeExistsPolicy.OVERWRITE);
     }

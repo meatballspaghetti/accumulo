@@ -341,7 +341,7 @@ public class MetadataConstraints implements Constraint {
         }
 
         if (zooRoot == null) {
-          zooRoot = context.getZooKeeperRoot();
+          zooRoot = "/";
         }
 
         boolean lockHeld = false;

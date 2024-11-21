@@ -609,8 +609,7 @@ public class Admin implements KeywordExecutable {
       log.error("No tablet servers provided.");
       return;
     }
-
-    final String zTServerRoot = getTServersZkPath(context);
+    
     final ZooCache zc = context.getZooCache();
     List<String> runningServers;
 
@@ -623,23 +622,12 @@ public class Admin implements KeywordExecutable {
       for (int port : context.getConfiguration().getPort(Property.TSERV_CLIENTPORT)) {
         HostAndPort address = AddressUtil.parseAddress(server, port);
         final String finalServer =
-            qualifyWithZooKeeperSessionId(zTServerRoot, zc, address.toString());
+            qualifyWithZooKeeperSessionId(Constants.ZTSERVERS, zc, address.toString());
         log.info("Stopping server {}", finalServer);
         ThriftClientTypes.MANAGER.executeVoid(context, client -> client
             .shutdownTabletServer(TraceUtil.traceInfo(), context.rpcCreds(), finalServer, force));
       }
     }
-  }
-
-  /**
-   * Get the parent ZNode for tservers for the given instance
-   *
-   * @param context ClientContext
-   * @return The tservers znode for the instance
-   */
-  static String getTServersZkPath(ClientContext context) {
-    requireNonNull(context);
-    return context.getZooKeeperRoot() + Constants.ZTSERVERS;
   }
 
   /**
@@ -875,12 +863,10 @@ public class Admin implements KeywordExecutable {
     validateFateUserInput(fateOpsCommand);
 
     AdminUtil<Admin> admin = new AdminUtil<>(true);
-    final String zkRoot = context.getZooKeeperRoot();
-    var zLockManagerPath = ServiceLock.path(zkRoot + Constants.ZMANAGER_LOCK);
-    var zTableLocksPath = ServiceLock.path(zkRoot + Constants.ZTABLE_LOCKS);
-    String fateZkPath = zkRoot + Constants.ZFATE;
+    var zLockManagerPath = ServiceLock.path(Constants.ZMANAGER_LOCK);
+    var zTableLocksPath = ServiceLock.path(Constants.ZTABLE_LOCKS);
     ZooReaderWriter zk = context.getZooReaderWriter();
-    ZooStore<Admin> zs = new ZooStore<>(fateZkPath, zk);
+    ZooStore<Admin> zs = new ZooStore<>(Constants.ZFATE, zk);
 
     if (fateOpsCommand.cancel) {
       cancelSubmittedFateTxs(context, fateOpsCommand.txList);

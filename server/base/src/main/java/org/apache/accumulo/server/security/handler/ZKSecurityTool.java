@@ -190,8 +190,4 @@ class ZKSecurityTool {
     }
     return toReturn;
   }
-
-  public static String getInstancePath(InstanceId instanceId) {
-    return Constants.ZROOT + "/" + instanceId;
-  }
 }

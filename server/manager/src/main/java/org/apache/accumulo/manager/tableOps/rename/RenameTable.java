@@ -84,7 +84,7 @@ public class RenameTable extends ManagerRepo {
       final String oldName = qualifiedOldTableName.getSecond();
 
       final String tap =
-          manager.getZooKeeperRoot() + Constants.ZTABLES + "/" + tableId + Constants.ZTABLE_NAME;
+          Constants.ZTABLES + "/" + tableId + Constants.ZTABLE_NAME;
 
       zoo.mutateExisting(tap, current -> {
         final String currentName = new String(current, UTF_8);

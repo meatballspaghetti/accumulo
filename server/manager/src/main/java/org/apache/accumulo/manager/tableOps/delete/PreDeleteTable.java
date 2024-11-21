@@ -35,8 +35,8 @@ import org.apache.zookeeper.KeeperException;
 
 public class PreDeleteTable extends ManagerRepo {
 
-  public static String createDeleteMarkerPath(InstanceId instanceId, TableId tableId) {
-    return Constants.ZROOT + "/" + instanceId + Constants.ZTABLES + "/" + tableId.canonical()
+  public static String createDeleteMarkerPath(TableId tableId) {
+    return Constants.ZTABLES + "/" + tableId.canonical()
         + Constants.ZTABLE_DELETE_MARKER;
   }
 
@@ -58,7 +58,7 @@ public class PreDeleteTable extends ManagerRepo {
 
   private void preventFutureCompactions(Manager environment)
       throws KeeperException, InterruptedException {
-    String deleteMarkerPath = createDeleteMarkerPath(environment.getInstanceID(), tableId);
+    String deleteMarkerPath = createDeleteMarkerPath(tableId);
     ZooReaderWriter zoo = environment.getContext().getZooReaderWriter();
     zoo.putPersistentData(deleteMarkerPath, new byte[] {}, NodeExistsPolicy.SKIP);
   }

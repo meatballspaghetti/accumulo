@@ -584,14 +584,13 @@ public class TabletsMetadata implements Iterable<TabletMetadata>, AutoCloseable 
 
   private static TabletMetadata getRootMetadata(ClientContext ctx,
       ReadConsistency readConsistency) {
-    String zkRoot = ctx.getZooKeeperRoot();
     switch (readConsistency) {
       case EVENTUAL:
-        return getRootMetadata(zkRoot, ctx.getZooCache());
+        return getRootMetadata("/", ctx.getZooCache());
       case IMMEDIATE:
         ZooReader zooReader = ctx.getZooReader();
         try {
-          var path = zkRoot + RootTable.ZROOT_TABLET;
+          var path = RootTable.ZROOT_TABLET;
           // attempt (see ZOOKEEPER-1675) to ensure the latest root table metadata is read from
           // zookeeper
           zooReader.sync(path);

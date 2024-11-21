@@ -219,18 +219,17 @@ public class GCRun implements GarbageCollectionEnvironment {
 
   @Override
   public Map<TableId,TableState> getTableIDs() throws InterruptedException {
-    final String tablesPath = context.getZooKeeperRoot() + Constants.ZTABLES;
     final ZooReader zr = context.getZooReader();
     int retries = 1;
     IllegalStateException ioe = null;
     while (retries <= 10) {
       try {
-        zr.sync(tablesPath);
+        zr.sync(Constants.ZTABLES);
         final Map<TableId,TableState> tids = new HashMap<>();
-        for (String table : zr.getChildren(tablesPath)) {
+        for (String table : zr.getChildren(Constants.ZTABLES)) {
           TableId tableId = TableId.of(table);
           TableState tableState = null;
-          String statePath = context.getZooKeeperRoot() + Constants.ZTABLES + "/"
+          String statePath = Constants.ZTABLES + "/"
               + tableId.canonical() + Constants.ZTABLE_STATE;
           try {
             byte[] state = zr.getData(statePath);

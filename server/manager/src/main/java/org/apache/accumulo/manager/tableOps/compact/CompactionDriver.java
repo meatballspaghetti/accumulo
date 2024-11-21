@@ -53,8 +53,8 @@ import org.slf4j.LoggerFactory;
 
 class CompactionDriver extends ManagerRepo {
 
-  public static String createCompactionCancellationPath(InstanceId instanceId, TableId tableId) {
-    return Constants.ZROOT + "/" + instanceId + Constants.ZTABLES + "/" + tableId.canonical()
+  public static String createCompactionCancellationPath(TableId tableId) {
+    return Constants.ZTABLES + "/" + tableId.canonical()
         + Constants.ZTABLE_COMPACT_CANCEL_ID;
   }
 
@@ -85,7 +85,7 @@ class CompactionDriver extends ManagerRepo {
       return 0;
     }
 
-    String zCancelID = createCompactionCancellationPath(manager.getInstanceID(), tableId);
+    String zCancelID = createCompactionCancellationPath(tableId);
     ZooReaderWriter zoo = manager.getContext().getZooReaderWriter();
 
     if (Long.parseLong(new String(zoo.getData(zCancelID), UTF_8)) >= compactId) {
@@ -96,7 +96,7 @@ class CompactionDriver extends ManagerRepo {
     }
 
     String deleteMarkerPath =
-        PreDeleteTable.createDeleteMarkerPath(manager.getInstanceID(), tableId);
+        PreDeleteTable.createDeleteMarkerPath(tableId);
     if (zoo.exists(deleteMarkerPath)) {
       // table is being deleted
       throw new AcceptableThriftTableOperationException(tableId.canonical(), null,

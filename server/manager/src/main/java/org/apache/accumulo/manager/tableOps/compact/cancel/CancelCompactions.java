@@ -68,9 +68,9 @@ public class CancelCompactions extends ManagerRepo {
 
   public static void mutateZooKeeper(long tid, TableId tableId, Manager environment)
       throws Exception {
-    String zCompactID = Constants.ZROOT + "/" + environment.getInstanceID() + Constants.ZTABLES
+    String zCompactID = Constants.ZTABLES
         + "/" + tableId + Constants.ZTABLE_COMPACT_ID;
-    String zCancelID = Constants.ZROOT + "/" + environment.getInstanceID() + Constants.ZTABLES + "/"
+    String zCancelID = Constants.ZTABLES + "/"
         + tableId + Constants.ZTABLE_COMPACT_CANCEL_ID;
 
     ZooReaderWriter zoo = environment.getContext().getZooReaderWriter();

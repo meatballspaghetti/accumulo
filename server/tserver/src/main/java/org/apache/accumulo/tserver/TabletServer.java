@@ -349,7 +349,7 @@ public class TabletServer extends AbstractServer implements TabletHostingServer 
       // Watcher to notice new AuthenticationKeys which enable delegation tokens
       authKeyWatcher =
           new ZooAuthenticationKeyWatcher(context.getSecretManager(), context.getZooReaderWriter(),
-              context.getZooKeeperRoot() + Constants.ZDELEGATION_TOKEN_KEYS);
+              Constants.ZDELEGATION_TOKEN_KEYS);
     } else {
       authKeyWatcher = null;
     }
@@ -614,7 +614,7 @@ public class TabletServer extends AbstractServer implements TabletHostingServer 
     ZooReaderWriter zoo = getContext().getZooReaderWriter();
     try {
       var zLockPath = ServiceLock.path(
-          getContext().getZooKeeperRoot() + Constants.ZTSERVERS + "/" + getClientAddressString());
+          Constants.ZTSERVERS + "/" + getClientAddressString());
 
       try {
         zoo.putPersistentData(zLockPath.toString(), new byte[] {}, NodeExistsPolicy.SKIP);
@@ -661,7 +661,7 @@ public class TabletServer extends AbstractServer implements TabletHostingServer 
 
         if (tabletServerLock.tryLock(lw, new ServiceLockData(descriptors))) {
           lockID = tabletServerLock.getLockID()
-              .serialize(getContext().getZooKeeperRoot() + Constants.ZTSERVERS + "/");
+              .serialize(Constants.ZTSERVERS + "/");
           lockSessionId = tabletServerLock.getSessionId();
           log.debug("Obtained tablet server lock {} {}", tabletServerLock.getLockPath(),
               getTabletSession());
