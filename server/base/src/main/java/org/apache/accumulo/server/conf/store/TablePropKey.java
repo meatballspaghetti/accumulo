@@ -33,14 +33,10 @@ public class TablePropKey extends PropStoreKey<TableId> {
   }
 
   public static TablePropKey of(final InstanceId instanceId, final TableId tableId) {
-    return new TablePropKey(instanceId, buildNodePath(instanceId, tableId), tableId);
+    return new TablePropKey(instanceId, ZTABLES + "/" + tableId.canonical() + ZCONFIG, tableId);
   }
 
   private TablePropKey(final InstanceId instanceId, final String path, final TableId tableId) {
     super(instanceId, path, tableId);
-  }
-
-  private static String buildNodePath(final InstanceId instanceId, final TableId id) {
-    return ZooUtil.getRoot(instanceId) + ZTABLES + "/" + id.canonical() + ZCONFIG;
   }
 }

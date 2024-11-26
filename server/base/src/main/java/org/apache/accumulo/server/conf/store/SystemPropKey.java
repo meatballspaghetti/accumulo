@@ -35,11 +35,7 @@ public class SystemPropKey extends PropStoreKey<InstanceId> {
   }
 
   public static SystemPropKey of(final InstanceId instanceId) {
-    return new SystemPropKey(instanceId, buildNodePath(instanceId));
-  }
-
-  private static String buildNodePath(final InstanceId instanceId) {
-    return ZooUtil.getRoot(instanceId) + ZCONFIG;
+    return new SystemPropKey(instanceId, ZCONFIG);
   }
 
 }
