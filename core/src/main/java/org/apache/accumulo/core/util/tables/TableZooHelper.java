@@ -168,8 +168,7 @@ public class TableZooHelper implements AutoCloseable {
    * @return the table state.
    */
   public TableState getTableState(TableId tableId, boolean clearCachedState) {
-    String statePath = Constants.ZTABLES + "/" + tableId.canonical()
-        + Constants.ZTABLE_STATE;
+    String statePath = Constants.ZTABLES + "/" + tableId.canonical() + Constants.ZTABLE_STATE;
     if (clearCachedState) {
       context.getZooCache().clear(statePath);
       instanceToMapCache.invalidateAll();
@@ -198,8 +197,7 @@ public class TableZooHelper implements AutoCloseable {
     }
 
     ZooCache zc = context.getZooCache();
-    byte[] n = zc.get(Constants.ZTABLES + "/" + tableId
-        + Constants.ZTABLE_NAMESPACE);
+    byte[] n = zc.get(Constants.ZTABLES + "/" + tableId + Constants.ZTABLE_NAMESPACE);
     // We might get null out of ZooCache if this tableID doesn't exist
     if (n == null) {
       throw new TableNotFoundException(tableId.canonical(), null, null);

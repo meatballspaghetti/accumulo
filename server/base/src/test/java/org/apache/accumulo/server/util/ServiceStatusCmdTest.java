@@ -20,6 +20,9 @@ package org.apache.accumulo.server.util;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.apache.accumulo.core.Constants.ZGC_LOCK;
+import static org.apache.accumulo.core.Constants.ZTSERVERS;
+import static org.apache.accumulo.core.lock.ServiceLockData.ThriftService.TABLET_SCAN;
+import static org.apache.accumulo.core.lock.ServiceLockData.ThriftService.TSERV;
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
@@ -51,8 +54,7 @@ import org.slf4j.LoggerFactory;
 public class ServiceStatusCmdTest {
 
   private static final Logger LOG = LoggerFactory.getLogger(ServiceStatusCmdTest.class);
-
-  private final String zRoot = ZooUtil.getRoot(InstanceId.of(UUID.randomUUID()));
+  
   private ZooSession zk;
   private ZooReader zooReader;
 
@@ -80,7 +82,7 @@ public class ServiceStatusCmdTest {
     String lock3Data =
         "{\"descriptors\":[{\"uuid\":\"6effb690-c29c-4e0b-92ff-f6b308385a42\",\"service\":\"MANAGER\",\"address\":\"hostA:9999\",\"group\":\"manager1\"}]}";
 
-    String lockPath = zRoot + Constants.ZMANAGER_LOCK;
+    String lockPath = Constants.ZMANAGER_LOCK;
     expect(zk.getChildren(lockPath, null)).andReturn(List.of(lock1Name, lock2Name, lock3Name))
         .anyTimes();
     expect(zk.getData(lockPath + "/" + lock1Name, null, null)).andReturn(lock1data.getBytes(UTF_8))
@@ -93,7 +95,8 @@ public class ServiceStatusCmdTest {
     replay(zk);
 
     ServiceStatusCmd cmd = new ServiceStatusCmd();
-    StatusSummary status = cmd.getManagerStatus(zooReader, zRoot);
+    StatusSummary status = cmd.getStatusSummary(ServiceStatusReport.ReportKey.MANAGER, zooReader,
+        Constants.ZMANAGER_LOCK);
     LOG.info("manager status data: {}", status);
 
     assertEquals(3, status.getServiceCount());
@@ -125,7 +128,7 @@ public class ServiceStatusCmdTest {
     String host2 =
         "{\"descriptors\":[{\"uuid\":\"87465459-9c8f-4f95-b4c6-ef3029030d05\",\"service\":\"NONE\",\"address\":\"hostB\",\"group\":\"default\"}]}";
 
-    String lockPath = zRoot + Constants.ZMONITOR_LOCK;
+    String lockPath = Constants.ZMONITOR_LOCK;
     expect(zk.getChildren(lockPath, null)).andReturn(List.of(lock1Name, lock2Name)).anyTimes();
     expect(zk.getData(lockPath + "/" + lock1Name, null, null)).andReturn(host1.getBytes(UTF_8))
         .anyTimes();
@@ -135,7 +138,8 @@ public class ServiceStatusCmdTest {
     replay(zk);
 
     ServiceStatusCmd cmd = new ServiceStatusCmd();
-    StatusSummary status = cmd.getMonitorStatus(zooReader, zRoot);
+    StatusSummary status = cmd.getStatusSummary(ServiceStatusReport.ReportKey.MONITOR, zooReader,
+        Constants.ZMONITOR_LOCK);
     LOG.info("monitor status data: {}", status);
 
     assertEquals(2, status.getServiceCount());
@@ -200,7 +204,7 @@ public class ServiceStatusCmdTest {
             + "\",\"group\":\"default\"},{\"uuid\":\"d0e29f70-1eb5-4dc5-9ad6-2466ab56ea32\",\"service\":\"TABLET_INGEST\",\"address\":\""
             + host3 + "\",\"group\":\"default\"}]}";
 
-    String basePath = zRoot + Constants.ZTSERVERS;
+    String basePath = Constants.ZTSERVERS;
     expect(zk.getChildren(basePath, null)).andReturn(List.of(host1, host2, host3)).anyTimes();
 
     expect(zk.getChildren(basePath + "/" + host1, null)).andReturn(List.of(lock1Name)).once();
@@ -218,7 +222,8 @@ public class ServiceStatusCmdTest {
     replay(zk);
 
     ServiceStatusCmd cmd = new ServiceStatusCmd();
-    StatusSummary status = cmd.getTServerStatus(zooReader, zRoot);
+    StatusSummary status = cmd.getServerHostStatus(zooReader, Constants.ZTSERVERS,
+        ServiceStatusReport.ReportKey.T_SERVER, TSERV);
     LOG.info("tserver status data: {}", status);
 
     assertEquals(3, status.getServiceCount());
@@ -278,7 +283,7 @@ public class ServiceStatusCmdTest {
             + "\",\"group\":\"default\"},{\"uuid\":\"f408fed7-ce93-40d2-8e60-63e8a3daf416\",\"service\":\"CLIENT\",\"address\":\""
             + host4 + "\",\"group\":\"default\"}]}";
 
-    String lockPath = zRoot + Constants.ZSSERVERS;
+    String lockPath = Constants.ZSSERVERS;
     expect(zk.getChildren(lockPath, null)).andReturn(List.of(host1, host2, host3, host4))
         .anyTimes();
 
@@ -301,7 +306,8 @@ public class ServiceStatusCmdTest {
     replay(zk);
 
     ServiceStatusCmd cmd = new ServiceStatusCmd();
-    StatusSummary status = cmd.getScanServerStatus(zooReader, zRoot);
+    StatusSummary status = cmd.getServerHostStatus(zooReader, Constants.ZSSERVERS,
+        ServiceStatusReport.ReportKey.S_SERVER, TABLET_SCAN);
     assertEquals(4, status.getServiceCount());
 
     Map<String,Set<String>> hostByGroup = new TreeMap<>();
@@ -335,7 +341,7 @@ public class ServiceStatusCmdTest {
         "{\"descriptors\":[{\"uuid\":\"1d55f7a5-090d-48fc-a3ea-f1a66e984a21\",\"service\":\"COORDINATOR\",\"address\":\""
             + host3 + "\",\"group\":\"coord2\"}]}\n";
 
-    String lockPath = zRoot + Constants.ZCOORDINATOR_LOCK;
+    String lockPath = Constants.ZCOORDINATOR_LOCK;
     expect(zk.getChildren(lockPath, null)).andReturn(List.of(lock1Name, lock2Name, lock3Name))
         .anyTimes();
     expect(zk.getData(lockPath + "/" + lock1Name, null, null)).andReturn(lockData1.getBytes(UTF_8))
@@ -348,7 +354,8 @@ public class ServiceStatusCmdTest {
     replay(zk);
 
     ServiceStatusCmd cmd = new ServiceStatusCmd();
-    StatusSummary status = cmd.getCoordinatorStatus(zooReader, zRoot);
+    StatusSummary status = cmd.getStatusSummary(ServiceStatusReport.ReportKey.COORDINATOR,
+        zooReader, Constants.ZCOORDINATOR_LOCK);
     LOG.info("tserver status data: {}", status);
 
     assertEquals(3, status.getServiceCount());
@@ -373,7 +380,7 @@ public class ServiceStatusCmdTest {
 
   @Test
   public void testCompactorStatus() throws Exception {
-    String lockPath = zRoot + Constants.ZCOMPACTORS;
+    String lockPath = Constants.ZCOMPACTORS;
     expect(zk.getChildren(lockPath, null)).andReturn(List.of("q1", "q2")).once();
 
     expect(zk.getChildren(lockPath + "/q1", null)).andReturn(List.of("hostA:8080", "hostC:8081"))
@@ -384,7 +391,7 @@ public class ServiceStatusCmdTest {
     replay(zk);
 
     ServiceStatusCmd cmd = new ServiceStatusCmd();
-    StatusSummary status = cmd.getCompactorStatus(zooReader, zRoot);
+    StatusSummary status = cmd.getCompactorHosts(zooReader, Constants.ZCOMPACTORS);
     LOG.info("compactor group counts: {}", status);
     assertEquals(2, status.getResourceGroups().size());
   }
@@ -392,7 +399,7 @@ public class ServiceStatusCmdTest {
   @Test
   public void testGcHosts() throws Exception {
 
-    String lockPath = zRoot + ZGC_LOCK;
+    String lockPath = ZGC_LOCK;
     UUID uuid1 = UUID.randomUUID();
     String lock1Name = "zlock#" + uuid1 + "#0000000001";
     UUID uuid2 = UUID.randomUUID();
@@ -417,7 +424,8 @@ public class ServiceStatusCmdTest {
     replay(zk);
 
     ServiceStatusCmd cmd = new ServiceStatusCmd();
-    StatusSummary status = cmd.getGcStatus(zooReader, zRoot);
+    StatusSummary status =
+        cmd.getStatusSummary(ServiceStatusReport.ReportKey.GC, zooReader, Constants.ZGC_LOCK);
     LOG.info("gc server counts: {}", status);
     assertEquals(2, status.getResourceGroups().size());
     assertEquals(2, status.getServiceCount());
@@ -450,7 +458,7 @@ public class ServiceStatusCmdTest {
         "{\"descriptors\":[{\"uuid\":\"6effb690-c29c-4e0b-92ff-f6b308385a42\",\"service\":\"MANAGER\",\"address\":\""
             + host3 + "\",\"group\":\"manager1\"}]}";
 
-    String lockPath = zRoot + Constants.ZMANAGER_LOCK;
+    String lockPath = Constants.ZMANAGER_LOCK;
     expect(zk.getChildren(lockPath, null)).andReturn(List.of(lock1Name, lock2Name, lock3Name))
         .anyTimes();
     expect(zk.getData(lockPath + "/" + lock1Name, null, null))
@@ -463,7 +471,9 @@ public class ServiceStatusCmdTest {
     replay(zk);
 
     ServiceStatusCmd cmd = new ServiceStatusCmd();
-    StatusSummary status = cmd.getManagerStatus(zooReader, zRoot);
+    StatusSummary status = cmd.getStatusSummary(ServiceStatusReport.ReportKey.MANAGER, zooReader,
+        Constants.ZMANAGER_LOCK);
+    ;
     LOG.info("manager status data: {}", status);
 
     assertEquals(2, status.getServiceByGroups().size());

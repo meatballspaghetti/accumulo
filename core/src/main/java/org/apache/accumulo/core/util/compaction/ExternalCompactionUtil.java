@@ -104,7 +104,8 @@ public class ExternalCompactionUtil {
    * @return Optional HostAndPort of Coordinator node if found
    */
   public static Optional<HostAndPort> findCompactionCoordinator(ClientContext context) {
-    return ServiceLock.getLockData(context.getZooCache(), ServiceLock.path(Constants.ZCOORDINATOR_LOCK), new ZcStat())
+    return ServiceLock.getLockData(context.getZooCache(),
+        ServiceLock.path(Constants.ZCOORDINATOR_LOCK), new ZcStat())
         .map(sld -> sld.getAddress(ThriftService.COORDINATOR));
   }
 

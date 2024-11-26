@@ -407,11 +407,10 @@ public class ClientContext implements AccumuloClient {
    */
   public Map<String,Pair<UUID,String>> getScanServers() {
     Map<String,Pair<UUID,String>> liveScanServers = new HashMap<>();
-    String root = this.getZooKeeperRoot() + Constants.ZSSERVERS;
-    var addrs = this.getZooCache().getChildren(root);
+    var addrs = this.getZooCache().getChildren(Constants.ZSSERVERS);
     for (String addr : addrs) {
       try {
-        final var zLockPath = ServiceLock.path(root + "/" + addr);
+        final var zLockPath = ServiceLock.path(Constants.ZSSERVERS + "/" + addr);
         ZcStat stat = new ZcStat();
         Optional<ServiceLockData> sld = ServiceLock.getLockData(getZooCache(), zLockPath, stat);
         if (sld.isPresent()) {

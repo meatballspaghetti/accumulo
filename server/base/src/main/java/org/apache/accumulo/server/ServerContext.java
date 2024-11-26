@@ -93,7 +93,6 @@ public class ServerContext extends ClientContext {
   private final ServerInfo info;
   private final ServerDirs serverDirs;
   private final Supplier<ZooPropStore> propStore;
-  private final Supplier<String> zkUserPath;
 
   // lazily loaded resources, only loaded when needed
   private final Supplier<TableManager> tableManager;
@@ -451,7 +450,7 @@ public class ServerContext extends ClientContext {
   }
 
   public String zkUserPath() {
-    return zkUserPath.get();
+    return Constants.ZUSERS;
   }
 
   public LowMemoryDetector getLowMemoryDetector() {

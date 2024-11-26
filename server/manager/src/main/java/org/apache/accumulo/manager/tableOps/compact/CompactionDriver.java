@@ -28,14 +28,12 @@ import org.apache.accumulo.core.clientImpl.AcceptableThriftTableOperationExcepti
 import org.apache.accumulo.core.clientImpl.TableOperationsImpl;
 import org.apache.accumulo.core.clientImpl.thrift.TableOperation;
 import org.apache.accumulo.core.clientImpl.thrift.TableOperationExceptionType;
-import org.apache.accumulo.core.data.InstanceId;
 import org.apache.accumulo.core.data.NamespaceId;
 import org.apache.accumulo.core.data.TableId;
 import org.apache.accumulo.core.dataImpl.KeyExtent;
 import org.apache.accumulo.core.fate.FateTxId;
 import org.apache.accumulo.core.fate.Repo;
 import org.apache.accumulo.core.fate.zookeeper.ZooReaderWriter;
-import org.apache.accumulo.core.fate.zookeeper.ZooUtil;
 import org.apache.accumulo.core.manager.state.tables.TableState;
 import org.apache.accumulo.core.metadata.AccumuloTable;
 import org.apache.accumulo.core.metadata.TServerInstance;
@@ -55,8 +53,7 @@ import org.slf4j.LoggerFactory;
 class CompactionDriver extends ManagerRepo {
 
   public static String createCompactionCancellationPath(TableId tableId) {
-    return Constants.ZTABLES + "/" + tableId.canonical()
-        + Constants.ZTABLE_COMPACT_CANCEL_ID;
+    return Constants.ZTABLES + "/" + tableId.canonical() + Constants.ZTABLE_COMPACT_CANCEL_ID;
   }
 
   private static final long serialVersionUID = 1L;

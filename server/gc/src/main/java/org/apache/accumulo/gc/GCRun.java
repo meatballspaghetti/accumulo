@@ -48,6 +48,7 @@ import org.apache.accumulo.core.conf.AccumuloConfiguration;
 import org.apache.accumulo.core.conf.Property;
 import org.apache.accumulo.core.data.TableId;
 import org.apache.accumulo.core.fate.zookeeper.ZooReader;
+import org.apache.accumulo.core.fate.zookeeper.ZooUtil;
 import org.apache.accumulo.core.gc.GcCandidate;
 import org.apache.accumulo.core.gc.Reference;
 import org.apache.accumulo.core.gc.ReferenceFile;
@@ -229,8 +230,7 @@ public class GCRun implements GarbageCollectionEnvironment {
         for (String table : zr.getChildren(Constants.ZTABLES)) {
           TableId tableId = TableId.of(table);
           TableState tableState = null;
-          String statePath = Constants.ZTABLES + "/"
-              + tableId.canonical() + Constants.ZTABLE_STATE;
+          String statePath = Constants.ZTABLES + "/" + tableId.canonical() + Constants.ZTABLE_STATE;
           try {
             byte[] state = zr.getData(statePath);
             if (state == null) {
@@ -262,7 +262,8 @@ public class GCRun implements GarbageCollectionEnvironment {
       throws TableNotFoundException {
     final VolumeManager fs = context.getVolumeManager();
     var metadataLocation = level == Ample.DataLevel.ROOT
-        ? context.getZooKeeperRoot() + " for " + AccumuloTable.ROOT.tableName() : level.metaTable();
+        ? ZooUtil.getRoot(context.getInstanceID()) + " for " + AccumuloTable.ROOT.tableName()
+        : level.metaTable();
 
     if (inSafeMode()) {
       System.out.println("SAFEMODE: There are " + confirmedDeletes.size()

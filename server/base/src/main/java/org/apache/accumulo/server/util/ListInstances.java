@@ -35,7 +35,6 @@ import org.apache.accumulo.core.conf.SiteConfiguration;
 import org.apache.accumulo.core.data.InstanceId;
 import org.apache.accumulo.core.fate.zookeeper.ZooCache;
 import org.apache.accumulo.core.fate.zookeeper.ZooReader;
-import org.apache.accumulo.core.fate.zookeeper.ZooUtil;
 import org.apache.accumulo.core.lock.ServiceLock;
 import org.apache.accumulo.core.lock.ServiceLockData;
 import org.apache.accumulo.core.lock.ServiceLockData.ThriftService;
@@ -170,7 +169,8 @@ public class ListInstances {
     }
 
     try {
-      Optional<ServiceLockData> sld = ServiceLock.getLockData(cache, ServiceLock.path(Constants.ZMANAGER_LOCK), null);
+      Optional<ServiceLockData> sld =
+          ServiceLock.getLockData(cache, ServiceLock.path(Constants.ZMANAGER_LOCK), null);
       if (sld.isEmpty()) {
         return null;
       }

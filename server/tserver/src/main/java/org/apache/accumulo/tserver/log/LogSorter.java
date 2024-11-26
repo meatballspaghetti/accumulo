@@ -296,8 +296,8 @@ public class LogSorter {
     ThreadPoolExecutor threadPool =
         ThreadPools.getServerThreadPools().getPoolBuilder(TSERVER_WAL_SORT_CONCURRENT_POOL)
             .numCoreThreads(threadPoolSize).enableThreadPoolMetrics().build();
-    new DistributedWorkQueue(Constants.ZRECOVERY, sortedLogConf,
-        context).startProcessing(new LogProcessor(), threadPool);
+    new DistributedWorkQueue(Constants.ZRECOVERY, sortedLogConf, context)
+        .startProcessing(new LogProcessor(), threadPool);
   }
 
   public List<RecoveryStatus> getLogSorts() {

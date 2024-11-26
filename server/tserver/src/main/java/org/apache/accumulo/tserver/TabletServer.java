@@ -614,8 +614,7 @@ public class TabletServer extends AbstractServer implements TabletHostingServer 
   private void announceExistence() {
     ZooReaderWriter zoo = getContext().getZooSession().asReaderWriter();
     try {
-      var zLockPath = ServiceLock.path(
-          Constants.ZTSERVERS + "/" + getClientAddressString());
+      var zLockPath = ServiceLock.path(Constants.ZTSERVERS + "/" + getClientAddressString());
 
       try {
         zoo.putPersistentData(zLockPath.toString(), new byte[] {}, NodeExistsPolicy.SKIP);
@@ -661,8 +660,7 @@ public class TabletServer extends AbstractServer implements TabletHostingServer 
         }
 
         if (tabletServerLock.tryLock(lw, new ServiceLockData(descriptors))) {
-          lockID = tabletServerLock.getLockID()
-              .serialize(Constants.ZTSERVERS + "/");
+          lockID = tabletServerLock.getLockID().serialize(Constants.ZTSERVERS + "/");
           lockSessionId = tabletServerLock.getSessionId();
           log.debug("Obtained tablet server lock {} {}", tabletServerLock.getLockPath(),
               getTabletSession());

@@ -89,8 +89,7 @@ public abstract class PropStoreKey<ID_TYPE extends AbstractId<ID_TYPE>>
   public static @Nullable PropStoreKey<?> fromPath(final String path) {
     String[] tokens = path.split("/");
 
-    if (tokens.length < 1
-        || tokens.length != EXPECTED_CONFIG_LEN && tokens.length != EXPECTED_SYS_CONFIG_LEN) {
+    if (tokens.length != EXPECTED_CONFIG_LEN && tokens.length != EXPECTED_SYS_CONFIG_LEN) {
       log.warn("Path '{}' is an invalid path for a property cache key - bad length", path);
       return null;
     }

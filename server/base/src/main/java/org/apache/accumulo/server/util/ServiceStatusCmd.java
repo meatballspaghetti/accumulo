@@ -65,12 +65,12 @@ public class ServiceStatusCmd {
 
     final Map<ServiceStatusReport.ReportKey,StatusSummary> services = new TreeMap<>();
 
-    services.put(ServiceStatusReport.ReportKey.MANAGER, getManagerStatus(zooReader, "/"));
+    services.put(ServiceStatusReport.ReportKey.MANAGER, getStatusSummary(
+        ServiceStatusReport.ReportKey.MANAGER, zooReader, Constants.ZMANAGER_LOCK));
     services.put(ServiceStatusReport.ReportKey.MONITOR, getMonitorStatus(zooReader, "/"));
     services.put(ServiceStatusReport.ReportKey.T_SERVER, getTServerStatus(zooReader, "/"));
     services.put(ServiceStatusReport.ReportKey.S_SERVER, getScanServerStatus(zooReader, "/"));
-    services.put(ServiceStatusReport.ReportKey.COORDINATOR,
-        getCoordinatorStatus(zooReader, "/"));
+    services.put(ServiceStatusReport.ReportKey.COORDINATOR, getCoordinatorStatus(zooReader, "/"));
     services.put(ServiceStatusReport.ReportKey.COMPACTOR, getCompactorStatus(zooReader, "/"));
     services.put(ServiceStatusReport.ReportKey.GC, getGcStatus(zooReader, "/"));
 
@@ -83,16 +83,6 @@ public class ServiceStatusCmd {
       report.report(sb);
       System.out.println(sb);
     }
-  }
-
-  /**
-   * The manager paths in ZooKeeper are: {@code /accumulo/[IID]/managers/lock/zlock#[NUM]} with the
-   * lock data providing a service descriptor with host and port.
-   */
-  @VisibleForTesting
-  StatusSummary getManagerStatus(final ZooReader zooReader, String zRootPath) {
-    String lockPath = zRootPath + Constants.ZMANAGER_LOCK;
-    return getStatusSummary(ServiceStatusReport.ReportKey.MANAGER, zooReader, lockPath);
   }
 
   /**
@@ -203,8 +193,9 @@ public class ServiceStatusCmd {
    *
    * @return service status
    */
-  private StatusSummary getStatusSummary(ServiceStatusReport.ReportKey displayNames,
-      ZooReader zooReader, String lockPath) {
+  @VisibleForTesting
+  StatusSummary getStatusSummary(ServiceStatusReport.ReportKey displayNames, ZooReader zooReader,
+      String lockPath) {
     var result = readAllNodesData(zooReader, lockPath);
     Map<String,Set<String>> byGroup = new TreeMap<>();
     result.getData().forEach(data -> {

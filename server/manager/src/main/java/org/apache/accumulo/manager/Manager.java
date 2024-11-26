@@ -523,9 +523,8 @@ public class Manager extends AbstractServer
 
   void setManagerGoalState(ManagerGoalState state) {
     try {
-      getContext().getZooSession().asReaderWriter().putPersistentData(
-          Constants.ZMANAGER_GOAL_STATE, state.name().getBytes(UTF_8),
-          NodeExistsPolicy.OVERWRITE);
+      getContext().getZooSession().asReaderWriter().putPersistentData(Constants.ZMANAGER_GOAL_STATE,
+          state.name().getBytes(UTF_8), NodeExistsPolicy.OVERWRITE);
     } catch (Exception ex) {
       log.error("Unable to set manager goal state in zookeeper");
     }
@@ -534,8 +533,7 @@ public class Manager extends AbstractServer
   ManagerGoalState getManagerGoalState() {
     while (true) {
       try {
-        byte[] data = getContext().getZooSession().asReaderWriter()
-            .getData(Constants.ZMANAGER_GOAL_STATE);
+        byte[] data = getContext().getZooSession().asReaderWriter().getData(Constants.ZMANAGER_GOAL_STATE);
         return ManagerGoalState.valueOf(new String(data, UTF_8));
       } catch (Exception e) {
         log.error("Problem getting real goal state from zookeeper: ", e);
@@ -1359,10 +1357,9 @@ public class Manager extends AbstractServer
       throw new IllegalStateException("Upgrade coordinator is unexpectedly not complete");
     }
     try {
-      final AgeOffStore<Manager> store = new AgeOffStore<>(
-          new org.apache.accumulo.core.fate.ZooStore<>(Constants.ZFATE,
-              context.getZooSession()),
-          HOURS.toMillis(8), System::currentTimeMillis);
+      final AgeOffStore<Manager> store =
+          new AgeOffStore<>(new org.apache.accumulo.core.fate.ZooStore<>(Constants.ZFATE,
+              context.getZooSession()), HOURS.toMillis(8), System::currentTimeMillis);
 
       Fate<Manager> f = initializeFateInstance(store, getConfiguration());
       fateRef.set(f);

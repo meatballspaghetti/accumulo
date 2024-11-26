@@ -102,8 +102,7 @@ public class MetadataTableUtil {
   private MetadataTableUtil() {}
 
   public static void putLockID(ServerContext context, ServiceLock zooLock, Mutation m) {
-    ServerColumnFamily.LOCK_COLUMN.put(m,
-        new Value(zooLock.getLockID().serialize( "/")));
+    ServerColumnFamily.LOCK_COLUMN.put(m, new Value(zooLock.getLockID().serialize("/")));
   }
 
   public static void update(ServerContext context, ServiceLock zooLock, Mutation m,

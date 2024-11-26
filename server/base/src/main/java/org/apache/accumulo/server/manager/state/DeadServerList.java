@@ -85,7 +85,8 @@ public class DeadServerList {
 
   public void post(String server, String cause) {
     try {
-      zoo.putPersistentData(Constants.ZDEADTSERVERS + "/" + server, cause.getBytes(UTF_8), NodeExistsPolicy.SKIP);
+      zoo.putPersistentData(Constants.ZDEADTSERVERS + "/" + server, cause.getBytes(UTF_8),
+          NodeExistsPolicy.SKIP);
     } catch (Exception ex) {
       log.error("post failed with exception", ex);
     }

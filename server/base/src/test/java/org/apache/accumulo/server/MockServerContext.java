@@ -61,7 +61,6 @@ public class MockServerContext {
 
     ServerContext sc = createMock(ServerContext.class);
     expect(sc.getInstanceID()).andReturn(instanceID).anyTimes();
-    expect(sc.getZooKeeperRoot()).andReturn(ZooUtil.getRoot(instanceID)).anyTimes();
     expect(sc.getPropStore()).andReturn(propStore).anyTimes();
     return sc;
   }
