@@ -130,47 +130,32 @@ public class ZooKeeperInitializer {
     // Call this separately so the upgrader code can handle the zk node creation for scan refs
     initScanRefTableState(context);
 
-    zoo.putPersistentData(Constants.ZTSERVERS, EMPTY_BYTE_ARRAY,
-        ZooUtil.NodeExistsPolicy.FAIL);
-    zoo.putPersistentData(Constants.ZPROBLEMS, EMPTY_BYTE_ARRAY,
-        ZooUtil.NodeExistsPolicy.FAIL);
+    zoo.putPersistentData(Constants.ZTSERVERS, EMPTY_BYTE_ARRAY, ZooUtil.NodeExistsPolicy.FAIL);
+    zoo.putPersistentData(Constants.ZPROBLEMS, EMPTY_BYTE_ARRAY, ZooUtil.NodeExistsPolicy.FAIL);
     zoo.putPersistentData(RootTable.ZROOT_TABLET,
         getInitialRootTabletJson(rootTabletDirName, rootTabletFileUri),
         ZooUtil.NodeExistsPolicy.FAIL);
     zoo.putPersistentData(RootTable.ZROOT_TABLET_GC_CANDIDATES,
         new RootGcCandidates().toJson().getBytes(UTF_8), ZooUtil.NodeExistsPolicy.FAIL);
-    zoo.putPersistentData(Constants.ZMANAGERS, EMPTY_BYTE_ARRAY,
-        ZooUtil.NodeExistsPolicy.FAIL);
-    zoo.putPersistentData(Constants.ZMANAGER_LOCK, EMPTY_BYTE_ARRAY,
-        ZooUtil.NodeExistsPolicy.FAIL);
+    zoo.putPersistentData(Constants.ZMANAGERS, EMPTY_BYTE_ARRAY, ZooUtil.NodeExistsPolicy.FAIL);
+    zoo.putPersistentData(Constants.ZMANAGER_LOCK, EMPTY_BYTE_ARRAY, ZooUtil.NodeExistsPolicy.FAIL);
     zoo.putPersistentData(Constants.ZMANAGER_GOAL_STATE,
         ManagerGoalState.NORMAL.toString().getBytes(UTF_8), ZooUtil.NodeExistsPolicy.FAIL);
-    zoo.putPersistentData(Constants.ZGC, EMPTY_BYTE_ARRAY,
-        ZooUtil.NodeExistsPolicy.FAIL);
-    zoo.putPersistentData(Constants.ZGC_LOCK, EMPTY_BYTE_ARRAY,
-        ZooUtil.NodeExistsPolicy.FAIL);
-    zoo.putPersistentData(Constants.ZTABLE_LOCKS, EMPTY_BYTE_ARRAY,
-        ZooUtil.NodeExistsPolicy.FAIL);
+    zoo.putPersistentData(Constants.ZGC, EMPTY_BYTE_ARRAY, ZooUtil.NodeExistsPolicy.FAIL);
+    zoo.putPersistentData(Constants.ZGC_LOCK, EMPTY_BYTE_ARRAY, ZooUtil.NodeExistsPolicy.FAIL);
+    zoo.putPersistentData(Constants.ZTABLE_LOCKS, EMPTY_BYTE_ARRAY, ZooUtil.NodeExistsPolicy.FAIL);
     zoo.putPersistentData(Constants.ZHDFS_RESERVATIONS, EMPTY_BYTE_ARRAY,
         ZooUtil.NodeExistsPolicy.FAIL);
-    zoo.putPersistentData(Constants.ZNEXT_FILE, ZERO_CHAR_ARRAY,
-        ZooUtil.NodeExistsPolicy.FAIL);
-    zoo.putPersistentData(Constants.ZRECOVERY, ZERO_CHAR_ARRAY,
-        ZooUtil.NodeExistsPolicy.FAIL);
-    zoo.putPersistentData(Constants.ZMONITOR, EMPTY_BYTE_ARRAY,
-        ZooUtil.NodeExistsPolicy.FAIL);
-    zoo.putPersistentData(Constants.ZMONITOR_LOCK, EMPTY_BYTE_ARRAY,
-        ZooUtil.NodeExistsPolicy.FAIL);
-    zoo.putPersistentData(WalStateManager.ZWALS, EMPTY_BYTE_ARRAY,
-        ZooUtil.NodeExistsPolicy.FAIL);
-    zoo.putPersistentData(Constants.ZCOORDINATOR, EMPTY_BYTE_ARRAY,
-        ZooUtil.NodeExistsPolicy.FAIL);
+    zoo.putPersistentData(Constants.ZNEXT_FILE, ZERO_CHAR_ARRAY, ZooUtil.NodeExistsPolicy.FAIL);
+    zoo.putPersistentData(Constants.ZRECOVERY, ZERO_CHAR_ARRAY, ZooUtil.NodeExistsPolicy.FAIL);
+    zoo.putPersistentData(Constants.ZMONITOR, EMPTY_BYTE_ARRAY, ZooUtil.NodeExistsPolicy.FAIL);
+    zoo.putPersistentData(Constants.ZMONITOR_LOCK, EMPTY_BYTE_ARRAY, ZooUtil.NodeExistsPolicy.FAIL);
+    zoo.putPersistentData(WalStateManager.ZWALS, EMPTY_BYTE_ARRAY, ZooUtil.NodeExistsPolicy.FAIL);
+    zoo.putPersistentData(Constants.ZCOORDINATOR, EMPTY_BYTE_ARRAY, ZooUtil.NodeExistsPolicy.FAIL);
     zoo.putPersistentData(Constants.ZCOORDINATOR_LOCK, EMPTY_BYTE_ARRAY,
         ZooUtil.NodeExistsPolicy.FAIL);
-    zoo.putPersistentData(Constants.ZCOMPACTORS, EMPTY_BYTE_ARRAY,
-        ZooUtil.NodeExistsPolicy.FAIL);
-    zoo.putPersistentData(Constants.ZSSERVERS, EMPTY_BYTE_ARRAY,
-        ZooUtil.NodeExistsPolicy.FAIL);
+    zoo.putPersistentData(Constants.ZCOMPACTORS, EMPTY_BYTE_ARRAY, ZooUtil.NodeExistsPolicy.FAIL);
+    zoo.putPersistentData(Constants.ZSSERVERS, EMPTY_BYTE_ARRAY, ZooUtil.NodeExistsPolicy.FAIL);
   }
 
   /**

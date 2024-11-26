@@ -46,9 +46,8 @@ public class SetGoalState {
       SecurityUtil.serverLogin(siteConfig);
       try (var context = new ServerContext(siteConfig)) {
         context.waitForZookeeperAndHdfs();
-        context.getZooReaderWriter().putPersistentData(
-            Constants.ZMANAGER_GOAL_STATE, args[0].getBytes(UTF_8),
-            NodeExistsPolicy.OVERWRITE);
+        context.getZooReaderWriter().putPersistentData(Constants.ZMANAGER_GOAL_STATE,
+            args[0].getBytes(UTF_8), NodeExistsPolicy.OVERWRITE);
       }
     } finally {
       SingletonManager.setMode(Mode.CLOSED);

@@ -31,7 +31,6 @@ import java.util.Collections;
 import java.util.UUID;
 
 import org.apache.accumulo.core.Constants;
-import org.apache.accumulo.core.clientImpl.ClientContext;
 import org.apache.accumulo.core.data.InstanceId;
 import org.apache.accumulo.core.fate.zookeeper.ZooCache;
 import org.apache.accumulo.core.fate.zookeeper.ZooCache.ZcStat;
@@ -39,21 +38,6 @@ import org.apache.accumulo.core.fate.zookeeper.ZooUtil;
 import org.junit.jupiter.api.Test;
 
 public class AdminTest {
-
-  @Test
-  public void testZooKeeperTserverPath() {
-    ClientContext context = createMock(ClientContext.class);
-    InstanceId instanceId = InstanceId.of(UUID.randomUUID());
-
-    expect(context.getZooKeeperRoot()).andReturn(ZooUtil.getRoot(instanceId));
-
-    replay(context);
-
-    assertEquals(ZooUtil.getRoot(instanceId) + Constants.ZTSERVERS,
-        Admin.getTServersZkPath(context));
-
-    verify(context);
-  }
 
   @Test
   public void testQualifySessionId() {

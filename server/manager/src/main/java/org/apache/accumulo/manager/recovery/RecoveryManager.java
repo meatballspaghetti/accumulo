@@ -77,9 +77,8 @@ public class RecoveryManager {
         ThreadPools.getServerThreadPools().createScheduledExecutorService(4, "Walog sort starter");
     zooCache = new ZooCache(manager.getContext().getZooReader(), null);
     try {
-      List<String> workIDs =
-          new DistributedWorkQueue(Constants.ZRECOVERY,
-              manager.getConfiguration(), manager.getContext()).getWorkQueued();
+      List<String> workIDs = new DistributedWorkQueue(Constants.ZRECOVERY,
+          manager.getConfiguration(), manager.getContext()).getWorkQueued();
       sortsQueued.addAll(workIDs);
     } catch (Exception e) {
       log.warn("{}", e.getMessage(), e);
@@ -131,8 +130,8 @@ public class RecoveryManager {
   private void initiateSort(String sortId, String source, final String destination)
       throws KeeperException, InterruptedException {
     String work = source + "|" + destination;
-    new DistributedWorkQueue(Constants.ZRECOVERY,
-        manager.getConfiguration(), manager.getContext()).addWork(sortId, work.getBytes(UTF_8));
+    new DistributedWorkQueue(Constants.ZRECOVERY, manager.getConfiguration(), manager.getContext())
+        .addWork(sortId, work.getBytes(UTF_8));
 
     synchronized (this) {
       sortsQueued.add(sortId);
@@ -180,9 +179,7 @@ public class RecoveryManager {
         sortQueued = sortsQueued.contains(sortId);
       }
 
-      if (sortQueued
-          && zooCache.get(Constants.ZRECOVERY + "/" + sortId)
-              == null) {
+      if (sortQueued && zooCache.get(Constants.ZRECOVERY + "/" + sortId) == null) {
         synchronized (this) {
           sortsQueued.remove(sortId);
         }

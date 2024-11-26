@@ -313,7 +313,8 @@ public class UpgradeCoordinator {
       justification = "Want to immediately stop all manager threads on upgrade error")
   private void abortIfFateTransactions(ServerContext context) {
     try {
-      final ReadOnlyTStore<UpgradeCoordinator> fate = new ZooStore<>(Constants.ZFATE, context.getZooReaderWriter());
+      final ReadOnlyTStore<UpgradeCoordinator> fate =
+          new ZooStore<>(Constants.ZFATE, context.getZooReaderWriter());
       if (!fate.list().isEmpty()) {
         throw new AccumuloException("Aborting upgrade because there are"
             + " outstanding FATE transactions from a previous Accumulo version."

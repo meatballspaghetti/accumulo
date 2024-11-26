@@ -37,7 +37,6 @@ import org.apache.accumulo.core.data.NamespaceId;
 import org.apache.accumulo.core.data.TableId;
 import org.apache.accumulo.core.fate.zookeeper.ZooCache;
 import org.apache.accumulo.core.fate.zookeeper.ZooReaderWriter;
-import org.apache.accumulo.core.fate.zookeeper.ZooUtil;
 import org.apache.accumulo.core.fate.zookeeper.ZooUtil.NodeExistsPolicy;
 import org.apache.accumulo.core.fate.zookeeper.ZooUtil.NodeMissingPolicy;
 import org.apache.accumulo.core.manager.state.tables.TableState;
@@ -180,8 +179,7 @@ public class TableManager {
   private void updateTableStateCache() {
     synchronized (tableStateCache) {
       for (String tableId : zooStateCache.getChildren(Constants.ZTABLES)) {
-        if (zooStateCache.get(Constants.ZTABLES + "/" + tableId + Constants.ZTABLE_STATE)
-            != null) {
+        if (zooStateCache.get(Constants.ZTABLES + "/" + tableId + Constants.ZTABLE_STATE) != null) {
           updateTableStateCache(TableId.of(tableId));
         }
       }
@@ -191,8 +189,7 @@ public class TableManager {
   public TableState updateTableStateCache(TableId tableId) {
     synchronized (tableStateCache) {
       TableState tState = TableState.UNKNOWN;
-      byte[] data =
-          zooStateCache.get(Constants.ZTABLES + "/" + tableId + Constants.ZTABLE_STATE);
+      byte[] data = zooStateCache.get(Constants.ZTABLES + "/" + tableId + Constants.ZTABLE_STATE);
       if (data != null) {
         String sState = new String(data, UTF_8);
         try {

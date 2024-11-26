@@ -75,28 +75,23 @@ public class TransactionWatcher {
     public static void start(ServerContext context, String type, long tid)
         throws KeeperException, InterruptedException {
       ZooReaderWriter writer = context.getZooReaderWriter();
-      writer.putPersistentData("/" + type, new byte[] {},
+      writer.putPersistentData("/" + type, new byte[] {}, NodeExistsPolicy.OVERWRITE);
+      writer.putPersistentData("/" + type + "/" + tid, new byte[] {}, NodeExistsPolicy.OVERWRITE);
+      writer.putPersistentData("/" + type + "/" + tid + "-running", new byte[] {},
           NodeExistsPolicy.OVERWRITE);
-      writer.putPersistentData("/" + type + "/" + tid, new byte[] {},
-          NodeExistsPolicy.OVERWRITE);
-      writer.putPersistentData("/" + type + "/" + tid + "-running",
-          new byte[] {}, NodeExistsPolicy.OVERWRITE);
     }
 
     public static void stop(ServerContext context, String type, long tid)
         throws KeeperException, InterruptedException {
       ZooReaderWriter writer = context.getZooReaderWriter();
-      writer.recursiveDelete("/" + type + "/" + tid,
-          NodeMissingPolicy.SKIP);
+      writer.recursiveDelete("/" + type + "/" + tid, NodeMissingPolicy.SKIP);
     }
 
     public static void cleanup(ServerContext context, String type, long tid)
         throws KeeperException, InterruptedException {
       ZooReaderWriter writer = context.getZooReaderWriter();
-      writer.recursiveDelete("/" + type + "/" + tid,
-          NodeMissingPolicy.SKIP);
-      writer.recursiveDelete("/" + type + "/" + tid + "-running",
-          NodeMissingPolicy.SKIP);
+      writer.recursiveDelete("/" + type + "/" + tid, NodeMissingPolicy.SKIP);
+      writer.recursiveDelete("/" + type + "/" + tid + "-running", NodeMissingPolicy.SKIP);
     }
 
     public static Set<Long> allTransactionsAlive(ServerContext context, String type)

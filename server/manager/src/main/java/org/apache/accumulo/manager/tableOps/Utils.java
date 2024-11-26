@@ -75,8 +75,7 @@ public class Utils {
     final Map<NamespaceId,String> namespaces = new HashMap<>();
     final boolean namespaceInTableName = tableName.contains(".");
     try {
-      for (String tid : context.getZooReader()
-          .getChildren(Constants.ZTABLES)) {
+      for (String tid : context.getZooReader().getChildren(Constants.ZTABLES)) {
 
         final String zTablePath = Constants.ZTABLES + "/" + tid;
         try {
@@ -179,8 +178,7 @@ public class Utils {
     if (getLock(env.getContext(), namespaceId, id, lockType).tryLock()) {
       if (mustExist) {
         ZooReaderWriter zk = env.getContext().getZooReaderWriter();
-        if (!zk.exists(
-            Constants.ZNAMESPACES + "/" + namespaceId)) {
+        if (!zk.exists(Constants.ZNAMESPACES + "/" + namespaceId)) {
           throw new AcceptableThriftTableOperationException(namespaceId.canonical(), "", op,
               TableOperationExceptionType.NAMESPACE_NOTFOUND, "Namespace does not exist");
         }
@@ -218,8 +216,7 @@ public class Utils {
   private static Lock getLock(ServerContext context, AbstractId<?> id, long tid,
       LockType lockType) {
     byte[] lockData = FastFormat.toZeroPaddedHex(tid);
-    var fLockPath =
-        FateLock.path(Constants.ZTABLE_LOCKS + "/" + id.canonical());
+    var fLockPath = FateLock.path(Constants.ZTABLE_LOCKS + "/" + id.canonical());
     FateLock qlock = new FateLock(context.getZooReaderWriter(), fLockPath);
     DistributedLock lock = DistributedReadWriteLock.recoverLock(qlock, lockData);
     if (lock != null) {
