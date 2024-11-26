@@ -229,13 +229,11 @@ public class ZooInfoViewer implements KeywordExecutable {
     var conf = opts.getSiteConfiguration();
     try (var zk = new ZooSession(getClass().getSimpleName(), conf)) {
 
-      String instanceRoot = ZooUtil.getRoot(iid);
-
-      final Stat stat = new Stat();
+    final Stat stat = new Stat();
 
       recursiveAclRead(zk, ZROOT + ZINSTANCES, stat, aclMap);
 
-      recursiveAclRead(zk, instanceRoot, stat, aclMap);
+    recursiveAclRead(zk, "/", stat, aclMap);
 
       // print formatting
       aclMap.forEach((path, acl) -> {

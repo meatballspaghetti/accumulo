@@ -37,10 +37,6 @@ public class NamespacePropKey extends PropStoreKey<NamespaceId> {
   }
 
   public static NamespacePropKey of(final InstanceId instanceId, final NamespaceId id) {
-    return new NamespacePropKey(instanceId, buildNodePath(instanceId, id), id);
-  }
-
-  private static String buildNodePath(final InstanceId instanceId, final NamespaceId id) {
-    return ZooUtil.getRoot(instanceId) + ZNAMESPACES + "/" + id.canonical() + ZCONFIG;
+    return new NamespacePropKey(instanceId, ZNAMESPACES + "/" + id.canonical() + ZCONFIG, id);
   }
 }
