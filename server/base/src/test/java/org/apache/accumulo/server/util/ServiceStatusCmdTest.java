@@ -53,16 +53,13 @@ public class ServiceStatusCmdTest {
   private static final Logger LOG = LoggerFactory.getLogger(ServiceStatusCmdTest.class);
 
   private ServerContext context;
-  private String zRoot;
   private ZooReader zooReader;
 
   @BeforeEach
   public void populateContext() {
     InstanceId iid = InstanceId.of(UUID.randomUUID());
-    zRoot = "/accumulo/" + iid.canonical();
     context = createMock(ServerContext.class);
     expect(context.getInstanceID()).andReturn(iid).anyTimes();
-    expect(context.getZooKeeperRoot()).andReturn(zRoot).anyTimes();
 
     zooReader = createMock(ZooReader.class);
 
@@ -89,7 +86,7 @@ public class ServiceStatusCmdTest {
     String lock3Data =
         "{\"descriptors\":[{\"uuid\":\"6effb690-c29c-4e0b-92ff-f6b308385a42\",\"service\":\"MANAGER\",\"address\":\"hostA:9999\",\"group\":\"manager1\"}]}";
 
-    String lockPath = zRoot + Constants.ZMANAGER_LOCK;
+    String lockPath = Constants.ZMANAGER_LOCK;
     expect(zooReader.getChildren(eq(lockPath))).andReturn(List.of(lock1Name, lock2Name, lock3Name))
         .anyTimes();
     expect(zooReader.getData(eq(lockPath + "/" + lock1Name))).andReturn(lock1data.getBytes(UTF_8))
@@ -102,7 +99,7 @@ public class ServiceStatusCmdTest {
     replay(zooReader);
 
     ServiceStatusCmd cmd = new ServiceStatusCmd();
-    StatusSummary status = cmd.getManagerStatus(zooReader, zRoot);
+    StatusSummary status = cmd.getStatusSummary(ServiceStatusReport.ReportKey.MANAGER, zooReader, Constants.ZMANAGER_LOCK);
     LOG.info("manager status data: {}", status);
 
     assertEquals(3, status.getServiceCount());
@@ -134,7 +131,7 @@ public class ServiceStatusCmdTest {
     String host2 =
         "{\"descriptors\":[{\"uuid\":\"87465459-9c8f-4f95-b4c6-ef3029030d05\",\"service\":\"NONE\",\"address\":\"hostB\",\"group\":\"default\"}]}";
 
-    String lockPath = zRoot + Constants.ZMONITOR_LOCK;
+    String lockPath = Constants.ZMONITOR_LOCK;
     expect(zooReader.getChildren(eq(lockPath))).andReturn(List.of(lock1Name, lock2Name)).anyTimes();
     expect(zooReader.getData(eq(lockPath + "/" + lock1Name))).andReturn(host1.getBytes(UTF_8))
         .anyTimes();
@@ -474,7 +471,7 @@ public class ServiceStatusCmdTest {
     replay(zooReader);
 
     ServiceStatusCmd cmd = new ServiceStatusCmd();
-    StatusSummary status = cmd.getManagerStatus(zooReader, zRoot);
+    StatusSummary status = cmd.getStatusSummary(ServiceStatusReport.ReportKey.MANAGER, zooReader, Constants.ZMANAGER_LOCK);;
     LOG.info("manager status data: {}", status);
 
     assertEquals(2, status.getServiceByGroups().size());

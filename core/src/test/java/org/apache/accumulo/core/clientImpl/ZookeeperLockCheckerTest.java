@@ -36,7 +36,6 @@ public class ZookeeperLockCheckerTest {
   @BeforeEach
   public void setUp() {
     context = createMock(ClientContext.class);
-    expect(context.getZooKeeperRoot()).andReturn("/accumulo/iid").anyTimes();
     zc = createMock(ZooCache.class);
     expect(context.getZooCache()).andReturn(zc).anyTimes();
     replay(context);
@@ -45,7 +44,7 @@ public class ZookeeperLockCheckerTest {
 
   @Test
   public void testInvalidateCache() {
-    zc.clear(context.getZooKeeperRoot() + Constants.ZTSERVERS + "/server");
+    zc.clear(Constants.ZTSERVERS + "/server");
     replay(zc);
     zklc.invalidateCache("server");
     verify(zc);

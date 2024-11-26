@@ -94,7 +94,6 @@ public class ServerContext extends ClientContext {
   private final ZooReaderWriter zooReaderWriter;
   private final ServerDirs serverDirs;
   private final Supplier<ZooPropStore> propStore;
-  private final Supplier<String> zkUserPath;
 
   // lazily loaded resources, only loaded when needed
   private final Supplier<TableManager> tableManager;
@@ -118,7 +117,6 @@ public class ServerContext extends ClientContext {
     serverDirs = info.getServerDirs();
 
     propStore = memoize(() -> ZooPropStore.initialize(getInstanceID(), getZooReaderWriter()));
-    zkUserPath = memoize(() -> Constants.ZUSERS);
 
     tableManager = memoize(() -> new TableManager(this));
     nameAllocator = memoize(() -> new UniqueNameAllocator(this));
@@ -456,7 +454,7 @@ public class ServerContext extends ClientContext {
   }
 
   public String zkUserPath() {
-    return zkUserPath.get();
+    return Constants.ZUSERS;
   }
 
   public LowMemoryDetector getLowMemoryDetector() {

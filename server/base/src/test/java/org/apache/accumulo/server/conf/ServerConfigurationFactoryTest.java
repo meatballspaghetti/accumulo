@@ -79,7 +79,6 @@ public class ServerConfigurationFactoryTest {
     expectLastCall().anyTimes();
 
     context = createMock(ServerContext.class);
-    expect(context.getZooKeeperRoot()).andReturn("/accumulo/" + IID).anyTimes();
     expect(context.getInstanceID()).andReturn(IID).anyTimes();
     expect(context.getZooKeepers()).andReturn(ZK_HOST).anyTimes();
     expect(context.getZooKeepersSessionTimeOut()).andReturn(ZK_TIMEOUT).anyTimes();

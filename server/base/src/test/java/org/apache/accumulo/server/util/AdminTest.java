@@ -34,21 +34,6 @@ import org.junit.jupiter.api.Test;
 public class AdminTest {
 
   @Test
-  public void testZooKeeperTserverPath() {
-    ClientContext context = EasyMock.createMock(ClientContext.class);
-    InstanceId instanceId = InstanceId.of(UUID.randomUUID());
-
-    EasyMock.expect(context.getZooKeeperRoot()).andReturn(Constants.ZROOT + "/" + instanceId);
-
-    EasyMock.replay(context);
-
-    assertEquals(Constants.ZROOT + "/" + instanceId + Constants.ZTSERVERS,
-        Admin.getTServersZkPath(context));
-
-    EasyMock.verify(context);
-  }
-
-  @Test
   public void testQualifySessionId() {
     ZooCache zc = EasyMock.createMock(ZooCache.class);
 

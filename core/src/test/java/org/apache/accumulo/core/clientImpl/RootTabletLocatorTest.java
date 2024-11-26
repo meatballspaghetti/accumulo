@@ -38,7 +38,6 @@ public class RootTabletLocatorTest {
   @BeforeEach
   public void setUp() {
     context = createMock(ClientContext.class);
-    expect(context.getZooKeeperRoot()).andReturn("/accumulo/iid").anyTimes();
     zc = createMock(ZooCache.class);
     expect(context.getZooCache()).andReturn(zc).anyTimes();
     replay(context);
@@ -48,7 +47,7 @@ public class RootTabletLocatorTest {
 
   @Test
   public void testInvalidateCache_Server() {
-    zc.clear(context.getZooKeeperRoot() + Constants.ZTSERVERS + "/server");
+    zc.clear(Constants.ZTSERVERS + "/server");
     replay(zc);
     rtl.invalidateCache(context, "server");
     verify(zc);
