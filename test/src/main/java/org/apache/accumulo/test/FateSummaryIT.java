@@ -201,7 +201,7 @@ public class FateSummaryIT extends ConfigurableMacBase {
     // NNE and ensure it is handled/ignored within getTransactionStatus()
     ZooStore<String> zs = EasyMock.createMockBuilder(ZooStore.class)
         .withConstructor(String.class, ZooReaderWriter.class)
-        .withArgs(sctx.getZooKeeperRoot() + Constants.ZFATE, sctx.getZooReaderWriter())
+        .withArgs(Constants.ZFATE, sctx.getZooReaderWriter())
         .addMockedMethod("top").addMockedMethod("list").createMock();
     // Create 3 transactions, when iterating through the list of transactions in
     // getTransactionStatus(), the 2nd transaction should cause a NNE which should be

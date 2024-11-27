@@ -135,18 +135,14 @@ public class ServiceStatusCmdTest {
     String host2 =
         "{\"descriptors\":[{\"uuid\":\"87465459-9c8f-4f95-b4c6-ef3029030d05\",\"service\":\"NONE\",\"address\":\"hostB\",\"group\":\"default\"}]}";
 
-    expect(zooReader.getChildren(eq(Constants.ZMONITOR_LOCK)))
-        .andReturn(List.of(lock1Name, lock2Name)).anyTimes();
-    expect(zooReader.getData(eq(Constants.ZMONITOR_LOCK + "/" + lock1Name)))
-        .andReturn(host1.getBytes(UTF_8)).anyTimes();
-    expect(zooReader.getData(eq(Constants.ZMONITOR_LOCK + "/" + lock2Name)))
-        .andReturn(host2.getBytes(UTF_8)).anyTimes();
+    expect(zooReader.getChildren(eq(Constants.ZMONITOR_LOCK))).andReturn(List.of(lock1Name, lock2Name)).anyTimes();
+    expect(zooReader.getData(eq(Constants.ZMONITOR_LOCK + "/" + lock1Name))).andReturn(host1.getBytes(UTF_8)).anyTimes();
+    expect(zooReader.getData(eq(Constants.ZMONITOR_LOCK + "/" + lock2Name))).andReturn(host2.getBytes(UTF_8)).anyTimes();
 
     replay(zooReader);
 
     ServiceStatusCmd cmd = new ServiceStatusCmd();
-    StatusSummary status = cmd.getStatusSummary(ServiceStatusReport.ReportKey.MONITOR, zooReader,
-        Constants.ZMONITOR_LOCK);
+    StatusSummary status = cmd.getStatusSummary(ServiceStatusReport.ReportKey.MONITOR, zooReader, Constants.ZMONITOR_LOCK);
     LOG.info("monitor status data: {}", status);
 
     assertEquals(2, status.getServiceCount());
@@ -228,8 +224,7 @@ public class ServiceStatusCmdTest {
     replay(zooReader);
 
     ServiceStatusCmd cmd = new ServiceStatusCmd();
-    StatusSummary status = cmd.getServerHostStatus(zooReader, Constants.ZTSERVERS,
-        ServiceStatusReport.ReportKey.T_SERVER, TSERV);
+    StatusSummary status = cmd.getServerHostStatus(zooReader, Constants.ZTSERVERS, ServiceStatusReport.ReportKey.T_SERVER, TSERV);
     LOG.info("tserver status data: {}", status);
 
     assertEquals(3, status.getServiceCount());
@@ -289,34 +284,30 @@ public class ServiceStatusCmdTest {
             + "\",\"group\":\"default\"},{\"uuid\":\"f408fed7-ce93-40d2-8e60-63e8a3daf416\",\"service\":\"CLIENT\",\"address\":\""
             + host4 + "\",\"group\":\"default\"}]}";
 
-    expect(zooReader.getChildren(eq(Constants.ZSSERVERS)))
-        .andReturn(List.of(host1, host2, host3, host4)).anyTimes();
+    expect(zooReader.getChildren(eq(Constants.ZSSERVERS))).andReturn(List.of(host1, host2, host3, host4))
+        .anyTimes();
 
-    expect(zooReader.getChildren(eq(Constants.ZSSERVERS + "/" + host1)))
-        .andReturn(List.of(lock1Name)).once();
+    expect(zooReader.getChildren(eq(Constants.ZSSERVERS + "/" + host1))).andReturn(List.of(lock1Name)).once();
     expect(zooReader.getData(eq(Constants.ZSSERVERS + "/" + host1 + "/" + lock1Name)))
         .andReturn(lockData1.getBytes(UTF_8)).once();
 
-    expect(zooReader.getChildren(eq(Constants.ZSSERVERS + "/" + host2)))
-        .andReturn(List.of(lock2Name)).once();
+    expect(zooReader.getChildren(eq(Constants.ZSSERVERS + "/" + host2))).andReturn(List.of(lock2Name)).once();
     expect(zooReader.getData(eq(Constants.ZSSERVERS + "/" + host2 + "/" + lock2Name)))
         .andReturn(lockData2.getBytes(UTF_8)).once();
 
-    expect(zooReader.getChildren(eq(Constants.ZSSERVERS + "/" + host3)))
-        .andReturn(List.of(lock3Name)).once();
+    expect(zooReader.getChildren(eq(Constants.ZSSERVERS + "/" + host3))).andReturn(List.of(lock3Name)).once();
     expect(zooReader.getData(eq(Constants.ZSSERVERS + "/" + host3 + "/" + lock3Name)))
         .andReturn(lockData3.getBytes(UTF_8)).once();
 
-    expect(zooReader.getChildren(eq(Constants.ZSSERVERS + "/" + host4)))
-        .andReturn(List.of(lock4Name)).once();
+    expect(zooReader.getChildren(eq(Constants.ZSSERVERS + "/" + host4))).andReturn(List.of(lock4Name)).once();
     expect(zooReader.getData(eq(Constants.ZSSERVERS + "/" + host4 + "/" + lock4Name)))
         .andReturn(lockData4.getBytes(UTF_8)).once();
 
     replay(zooReader);
 
     ServiceStatusCmd cmd = new ServiceStatusCmd();
-    StatusSummary status = cmd.getServerHostStatus(zooReader, Constants.ZSSERVERS,
-        ServiceStatusReport.ReportKey.S_SERVER, TABLET_SCAN);
+    StatusSummary status = cmd.getServerHostStatus(zooReader, Constants.ZSSERVERS, ServiceStatusReport.ReportKey.S_SERVER,
+            TABLET_SCAN);
     assertEquals(4, status.getServiceCount());
 
     Map<String,Set<String>> hostByGroup = new TreeMap<>();
@@ -350,20 +341,19 @@ public class ServiceStatusCmdTest {
         "{\"descriptors\":[{\"uuid\":\"1d55f7a5-090d-48fc-a3ea-f1a66e984a21\",\"service\":\"COORDINATOR\",\"address\":\""
             + host3 + "\",\"group\":\"coord2\"}]}\n";
 
-    expect(zooReader.getChildren(eq(Constants.ZCOORDINATOR_LOCK)))
-        .andReturn(List.of(lock1Name, lock2Name, lock3Name)).anyTimes();
-    expect(zooReader.getData(eq(Constants.ZCOORDINATOR_LOCK + "/" + lock1Name)))
-        .andReturn(lockData1.getBytes(UTF_8)).anyTimes();
-    expect(zooReader.getData(eq(Constants.ZCOORDINATOR_LOCK + "/" + lock2Name)))
-        .andReturn(lockData2.getBytes(UTF_8)).anyTimes();
-    expect(zooReader.getData(eq(Constants.ZCOORDINATOR_LOCK + "/" + lock3Name)))
-        .andReturn(lockData3.getBytes(UTF_8)).anyTimes();
+    expect(zooReader.getChildren(eq(Constants.ZCOORDINATOR_LOCK))).andReturn(List.of(lock1Name, lock2Name, lock3Name))
+        .anyTimes();
+    expect(zooReader.getData(eq(Constants.ZCOORDINATOR_LOCK + "/" + lock1Name))).andReturn(lockData1.getBytes(UTF_8))
+        .anyTimes();
+    expect(zooReader.getData(eq(Constants.ZCOORDINATOR_LOCK + "/" + lock2Name))).andReturn(lockData2.getBytes(UTF_8))
+        .anyTimes();
+    expect(zooReader.getData(eq(Constants.ZCOORDINATOR_LOCK + "/" + lock3Name))).andReturn(lockData3.getBytes(UTF_8))
+        .anyTimes();
 
     replay(zooReader);
 
     ServiceStatusCmd cmd = new ServiceStatusCmd();
-    StatusSummary status = cmd.getStatusSummary(ServiceStatusReport.ReportKey.COORDINATOR,
-        zooReader, Constants.ZCOORDINATOR_LOCK);
+    StatusSummary status = cmd.getStatusSummary(ServiceStatusReport.ReportKey.COORDINATOR, zooReader, Constants.ZCOORDINATOR_LOCK);
     LOG.info("tserver status data: {}", status);
 
     assertEquals(3, status.getServiceCount());
@@ -430,8 +420,7 @@ public class ServiceStatusCmdTest {
     replay(zooReader);
 
     ServiceStatusCmd cmd = new ServiceStatusCmd();
-    StatusSummary status =
-        cmd.getStatusSummary(ServiceStatusReport.ReportKey.GC, zooReader, Constants.ZGC_LOCK);
+    StatusSummary status = cmd.getStatusSummary(ServiceStatusReport.ReportKey.GC, zooReader, Constants.ZGC_LOCK);
     LOG.info("gc server counts: {}", status);
     assertEquals(2, status.getResourceGroups().size());
     assertEquals(2, status.getServiceCount());
@@ -464,16 +453,16 @@ public class ServiceStatusCmdTest {
         "{\"descriptors\":[{\"uuid\":\"6effb690-c29c-4e0b-92ff-f6b308385a42\",\"service\":\"MANAGER\",\"address\":\""
             + host3 + "\",\"group\":\"manager1\"}]}";
 
-    expect(zooReader.getChildren(eq(Constants.ZMANAGER_LOCK)))
-        .andReturn(List.of(lock1Name, lock2Name, lock3Name)).anyTimes();
+    expect(zooReader.getChildren(eq(Constants.ZMANAGER_LOCK))).andReturn(List.of(lock1Name, lock2Name, lock3Name))
+        .anyTimes();
     // expect(zooReader.getData(eq(lockPath + "/" + lock1Name)))
     // .andThrow(new KeeperException.NoNodeException("no node forced exception")).once();
     expect(zooReader.getData(eq(Constants.ZMANAGER_LOCK + "/" + lock1Name)))
         .andThrow(new KeeperException.NoNodeException("no node forced exception")).once();
-    expect(zooReader.getData(eq(Constants.ZMANAGER_LOCK + "/" + lock2Name)))
-        .andReturn(lock2Data.getBytes(UTF_8)).anyTimes();
-    expect(zooReader.getData(eq(Constants.ZMANAGER_LOCK + "/" + lock3Name)))
-        .andReturn(lock3Data.getBytes(UTF_8)).anyTimes();
+    expect(zooReader.getData(eq(Constants.ZMANAGER_LOCK + "/" + lock2Name))).andReturn(lock2Data.getBytes(UTF_8))
+        .anyTimes();
+    expect(zooReader.getData(eq(Constants.ZMANAGER_LOCK + "/" + lock3Name))).andReturn(lock3Data.getBytes(UTF_8))
+        .anyTimes();
 
     replay(zooReader);
 

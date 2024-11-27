@@ -544,12 +544,6 @@ public class ClientContext implements AccumuloClient {
     return instanceIdSupplier.get();
   }
 
-  @Deprecated
-  public String getZooKeeperRoot() {
-    ensureOpen();
-    return ZooUtil.getRoot(getInstanceID());
-  }
-
   /**
    * Returns the instance name given at system initialization time.
    *

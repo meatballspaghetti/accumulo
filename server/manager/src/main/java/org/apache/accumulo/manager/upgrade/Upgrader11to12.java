@@ -92,17 +92,15 @@ public class Upgrader11to12 implements Upgrader {
   @Override
   public void upgradeZookeeper(@NonNull ServerContext context) {
     log.debug("Upgrade ZooKeeper: upgrading to data version {}", METADATA_FILE_JSON_ENCODING);
-    var zooRoot = ZooUtil.getRoot(context.getInstanceID());
-    var rootBase = zooRoot + ZROOT_TABLET;
 
     try {
       var zrw = context.getZooReaderWriter();
 
       // clean up nodes no longer in use
-      zrw.recursiveDelete(zooRoot + ZTRACERS, ZooUtil.NodeMissingPolicy.SKIP);
+      zrw.recursiveDelete(ZTRACERS, ZooUtil.NodeMissingPolicy.SKIP);
 
       Stat stat = new Stat();
-      byte[] rootData = zrw.getData(rootBase, stat);
+      byte[] rootData = zrw.getData(ZROOT_TABLET, stat);
 
       String json = new String(rootData, UTF_8);
 
@@ -120,27 +118,26 @@ public class Upgrader11to12 implements Upgrader {
       if (!mutations.isEmpty()) {
         log.info("Root metadata in ZooKeeper before upgrade: {}", json);
         rtm.update(mutations.get(0));
-        zrw.overwritePersistentData(rootBase, rtm.toJson().getBytes(UTF_8), stat.getVersion());
+        zrw.overwritePersistentData(ZROOT_TABLET, rtm.toJson().getBytes(UTF_8), stat.getVersion());
         log.info("Root metadata in ZooKeeper after upgrade: {}", rtm.toJson());
       }
 
-      String zPath = context.getZooKeeperRoot() + Constants.ZNAMESPACES;
-      byte[] namespacesData = zrw.getData(zPath);
+      byte[] namespacesData = zrw.getData(Constants.ZNAMESPACES);
       if (namespacesData.length != 0) {
         throw new IllegalStateException(
             "Unexpected data found under namespaces node: " + new String(namespacesData, UTF_8));
       }
-      List<String> namespaceIdList = zrw.getChildren(zPath);
+      List<String> namespaceIdList = zrw.getChildren(Constants.ZNAMESPACES);
       Map<String,String> namespaceMap = new HashMap<>();
       for (String namespaceId : namespaceIdList) {
-        String namespaceNamePath = zPath + "/" + namespaceId + ZNAMESPACE_NAME;
+        String namespaceNamePath = Constants.ZNAMESPACES + "/" + namespaceId + ZNAMESPACE_NAME;
         namespaceMap.put(namespaceId, new String(zrw.getData(namespaceNamePath), UTF_8));
       }
       byte[] mapping = NamespaceMapping.serialize(namespaceMap);
-      zrw.putPersistentData(zPath, mapping, ZooUtil.NodeExistsPolicy.OVERWRITE);
+      zrw.putPersistentData(Constants.ZNAMESPACES, mapping, ZooUtil.NodeExistsPolicy.OVERWRITE);
 
       for (String namespaceId : namespaceIdList) {
-        String namespaceNamePath = zPath + "/" + namespaceId + ZNAMESPACE_NAME;
+        String namespaceNamePath = Constants.ZNAMESPACES + "/" + namespaceId + ZNAMESPACE_NAME;
         zrw.delete(namespaceNamePath);
       }
 
