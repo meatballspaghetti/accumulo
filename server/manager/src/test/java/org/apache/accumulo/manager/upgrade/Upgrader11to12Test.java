@@ -359,39 +359,43 @@ public class Upgrader11to12Test {
     expect(context.getInstanceID()).andReturn(iid).anyTimes();
     expect(context.getZooSession()).andReturn(zk).anyTimes();
     expect(zk.asReaderWriter()).andReturn(zrw).anyTimes();
-    expect(context.getZooKeeperRoot()).andReturn(zkRoot).anyTimes();
 
-    zrw.recursiveDelete(zkRoot + "/tracers", ZooUtil.NodeMissingPolicy.SKIP);
+    zrw.recursiveDelete("/tracers",
+        ZooUtil.NodeMissingPolicy.SKIP);
     expectLastCall().once();
 
     Capture<Stat> statCapture = newCapture();
-    expect(zrw.getData(eq(zkRoot + "/root_tablet"), capture(statCapture))).andAnswer(() -> {
-      Stat stat = statCapture.getValue();
-      stat.setCtime(System.currentTimeMillis());
-      stat.setMtime(System.currentTimeMillis());
-      stat.setVersion(123); // default version
-      stat.setDataLength(zKRootV1.length);
-      statCapture.setValue(stat);
-      return zKRootV1;
-    }).once();
+    expect(zrw.getData(eq("/root_tablet"),
+        capture(statCapture))).andAnswer(() -> {
+          Stat stat = statCapture.getValue();
+          stat.setCtime(System.currentTimeMillis());
+          stat.setMtime(System.currentTimeMillis());
+          stat.setVersion(123); // default version
+          stat.setDataLength(zKRootV1.length);
+          statCapture.setValue(stat);
+          return zKRootV1;
+        }).once();
 
     Capture<byte[]> byteCapture = newCapture();
-    expect(zrw.overwritePersistentData(eq(zkRoot + "/root_tablet"), capture(byteCapture), eq(123)))
-        .andReturn(true).once();
+    expect(zrw.overwritePersistentData(eq("/root_tablet"),
+        capture(byteCapture), eq(123))).andReturn(true).once();
 
-    expect(zrw.getData(eq(zkRoot + Constants.ZNAMESPACES))).andReturn(new byte[0]).once();
+    expect(zrw.getData(eq(Constants.ZNAMESPACES)))
+        .andReturn(new byte[0]).once();
     Map<String,String> mockNamespaces = Map.of("ns1", "ns1name", "ns2", "ns2name");
-    expect(zrw.getChildren(eq(zkRoot + Constants.ZNAMESPACES)))
+    expect(zrw.getChildren(eq(Constants.ZNAMESPACES)))
         .andReturn(List.copyOf(mockNamespaces.keySet())).once();
     for (String ns : mockNamespaces.keySet()) {
-      expect(zrw.getData(zkRoot + Constants.ZNAMESPACES + "/" + ns + ZNAMESPACE_NAME))
+      expect(zrw.getData(Constants.ZNAMESPACES + "/" + ns + ZNAMESPACE_NAME))
           .andReturn(mockNamespaces.get(ns).getBytes(UTF_8)).once();
     }
     byte[] mapping = NamespaceMapping.serialize(mockNamespaces);
-    expect(zrw.putPersistentData(eq(zkRoot + Constants.ZNAMESPACES), aryEq(mapping),
-        eq(ZooUtil.NodeExistsPolicy.OVERWRITE))).andReturn(true).once();
+    expect(
+        zrw.putPersistentData(eq(Constants.ZNAMESPACES),
+            aryEq(mapping), eq(ZooUtil.NodeExistsPolicy.OVERWRITE)))
+        .andReturn(true).once();
     for (String ns : mockNamespaces.keySet()) {
-      zrw.delete(zkRoot + Constants.ZNAMESPACES + "/" + ns + ZNAMESPACE_NAME);
+      zrw.delete(Constants.ZNAMESPACES + "/" + ns + ZNAMESPACE_NAME);
       expectLastCall().once();
     }
 

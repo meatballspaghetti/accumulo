@@ -227,7 +227,6 @@ public class FateIT {
     Manager manager = createMock(Manager.class);
     ServerContext sctx = createMock(ServerContext.class);
     expect(manager.getContext()).andReturn(sctx).anyTimes();
-    expect(sctx.getZooKeeperRoot()).andReturn(ZK_ROOT).anyTimes();
     expect(sctx.getZooSession()).andReturn(zk).anyTimes();
     replay(manager, sctx);
 
@@ -299,7 +298,6 @@ public class FateIT {
     Manager manager = createMock(Manager.class);
     ServerContext sctx = createMock(ServerContext.class);
     expect(manager.getContext()).andReturn(sctx).anyTimes();
-    expect(sctx.getZooKeeperRoot()).andReturn(ZK_ROOT).anyTimes();
     expect(sctx.getZooSession()).andReturn(zk).anyTimes();
     replay(manager, sctx);
 
@@ -339,7 +337,6 @@ public class FateIT {
     Manager manager = createMock(Manager.class);
     ServerContext sctx = createMock(ServerContext.class);
     expect(manager.getContext()).andReturn(sctx).anyTimes();
-    expect(sctx.getZooKeeperRoot()).andReturn(ZK_ROOT).anyTimes();
     expect(sctx.getZooSession()).andReturn(zk).anyTimes();
     replay(manager, sctx);
 
@@ -381,7 +378,6 @@ public class FateIT {
     Manager manager = createMock(Manager.class);
     ServerContext sctx = createMock(ServerContext.class);
     expect(manager.getContext()).andReturn(sctx).anyTimes();
-    expect(sctx.getZooKeeperRoot()).andReturn(ZK_ROOT).anyTimes();
     expect(sctx.getZooSession()).andReturn(zk).anyTimes();
     replay(manager, sctx);
 
@@ -428,7 +424,6 @@ public class FateIT {
     Manager manager = createMock(Manager.class);
     ServerContext sctx = createMock(ServerContext.class);
     expect(manager.getContext()).andReturn(sctx).anyTimes();
-    expect(sctx.getZooKeeperRoot()).andReturn(ZK_ROOT).anyTimes();
     expect(sctx.getZooSession()).andReturn(zk).anyTimes();
     replay(manager, sctx);
 

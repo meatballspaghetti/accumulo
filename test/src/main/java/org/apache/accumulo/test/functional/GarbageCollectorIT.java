@@ -117,10 +117,9 @@ public class GarbageCollectorIT extends ConfigurableMacBase {
     getCluster().killProcess(ServerType.GARBAGE_COLLECTOR,
         getCluster().getProcesses().get(ServerType.GARBAGE_COLLECTOR).iterator().next());
     // delete lock in zookeeper if there, this will allow next GC to start quickly
-    var path = ServiceLock.path(getServerContext().getZooKeeperRoot() + Constants.ZGC_LOCK);
     ZooReaderWriter zk = getServerContext().getZooSession().asReaderWriter();
     try {
-      ServiceLock.deleteLock(zk, path);
+      ServiceLock.deleteLock(zk, ServiceLock.path(Constants.ZGC_LOCK));
     } catch (IllegalStateException e) {
       log.error("Unable to delete ZooLock for mini accumulo-gc", e);
     }
