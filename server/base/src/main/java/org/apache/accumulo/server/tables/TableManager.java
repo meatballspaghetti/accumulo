@@ -75,9 +75,8 @@ public class TableManager {
     final PropStore propStore = context.getPropStore();
     final InstanceId instanceId = context.getInstanceID();
     log.debug("Creating ZooKeeper entries for new namespace {} (ID: {})", namespace, namespaceId);
-    context.getZooReaderWriter().putPersistentData(
-        Constants.ZNAMESPACES + "/" + namespaceId, new byte[0],
-        existsPolicy);
+    context.getZooReaderWriter().putPersistentData(Constants.ZNAMESPACES + "/" + namespaceId,
+        new byte[0], existsPolicy);
     var propKey = NamespacePropKey.of(instanceId, namespaceId);
     if (!propStore.exists(propKey)) {
       propStore.create(propKey, Map.of());

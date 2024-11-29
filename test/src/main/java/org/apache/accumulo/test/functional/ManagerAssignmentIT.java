@@ -176,8 +176,8 @@ public class ManagerAssignmentIT extends AccumuloClusterHarness {
       locs.groupByTablet().keySet().stream().map(locs::getTabletLocation).forEach(location -> {
         HostAndPort address = HostAndPort.fromString(location);
         String addressWithSession = address.toString();
-        long sessionId =
-            ServiceLock.getSessionId(getCluster().getServerContext().getZooCache(), ServiceLock.path(Constants.ZTSERVERS + "/" + address));
+        long sessionId = ServiceLock.getSessionId(getCluster().getServerContext().getZooCache(),
+            ServiceLock.path(Constants.ZTSERVERS + "/" + address));
         if (sessionId != 0) {
           addressWithSession = address + "[" + Long.toHexString(sessionId) + "]";
         }
@@ -223,8 +223,8 @@ public class ManagerAssignmentIT extends AccumuloClusterHarness {
       locs.groupByTablet().keySet().stream().map(locs::getTabletLocation).forEach(location -> {
         HostAndPort address = HostAndPort.fromString(location);
         String addressWithSession = address.toString();
-        long sessionId =
-            ServiceLock.getSessionId(getCluster().getServerContext().getZooCache(), ServiceLock.path(Constants.ZTSERVERS + "/" + address));
+        long sessionId = ServiceLock.getSessionId(getCluster().getServerContext().getZooCache(),
+            ServiceLock.path(Constants.ZTSERVERS + "/" + address));
         if (sessionId != 0) {
           addressWithSession = address + "[" + Long.toHexString(sessionId) + "]";
         }

@@ -109,20 +109,26 @@ public class PropStoreZooKeeperIT {
 
     replay(context);
 
-    zrw.mkdirs(ZooUtil.getRoot(instanceId) + Constants.ZCONFIG);
-    zooKeeper.create(ZooUtil.getRoot(instanceId) + Constants.ZTABLES, new byte[0],
-        ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
-    zooKeeper.create(ZooUtil.getRoot(instanceId) + Constants.ZTABLES + "/" + tIdA.canonical(),
-        new byte[0], ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
-    zooKeeper.create(
-        ZooUtil.getRoot(instanceId) + Constants.ZTABLES + "/" + tIdA.canonical() + "/conf",
-        new byte[0], ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
+    testZk.initPaths(Constants.ZCONFIG);
+    try {
+      zooKeeper.create(Constants.ZTABLES, new byte[0], ZooDefs.Ids.OPEN_ACL_UNSAFE,
+          CreateMode.PERSISTENT);
+      zooKeeper.create(Constants.ZTABLES + "/" + tIdA.canonical(), new byte[0],
+          ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
+      zooKeeper.create(Constants.ZTABLES + "/" + tIdA.canonical() + "/conf", new byte[0],
+          ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
 
-    zooKeeper.create(ZooUtil.getRoot(instanceId) + Constants.ZTABLES + "/" + tIdB.canonical(),
-        new byte[0], ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
-    zooKeeper.create(
-        ZooUtil.getRoot(instanceId) + Constants.ZTABLES + "/" + tIdB.canonical() + "/conf",
-        new byte[0], ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
+      zooKeeper.create(Constants.ZTABLES + "/" + tIdB.canonical(), new byte[0],
+          ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
+      zooKeeper.create(Constants.ZTABLES + "/" + tIdB.canonical() + "/conf", new byte[0],
+          ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
+
+    } catch (KeeperException ex) {
+      log.trace("Issue during zk initialization, skipping", ex);
+    } catch (InterruptedException ex) {
+      Thread.currentThread().interrupt();
+      throw new IllegalStateException("Interrupted during zookeeper path initialization", ex);
+    }
     propStore = ZooPropStore.initialize(instanceId, context.getZooReaderWriter());
   }
 

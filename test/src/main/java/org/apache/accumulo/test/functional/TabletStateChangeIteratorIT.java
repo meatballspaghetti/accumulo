@@ -53,7 +53,6 @@ import org.apache.accumulo.core.data.Mutation;
 import org.apache.accumulo.core.data.TableId;
 import org.apache.accumulo.core.data.Value;
 import org.apache.accumulo.core.dataImpl.KeyExtent;
-import org.apache.accumulo.core.fate.zookeeper.ZooUtil;
 import org.apache.accumulo.core.lock.ServiceLock;
 import org.apache.accumulo.core.manager.state.tables.TableState;
 import org.apache.accumulo.core.manager.thrift.ManagerState;
@@ -307,8 +306,7 @@ public class TabletStateChangeIteratorIT extends AccumuloClusterHarness {
       HashSet<TServerInstance> tservers = new HashSet<>();
       for (String tserver : context.instanceOperations().getTabletServers()) {
         try {
-          var zPath = ServiceLock.path(ZooUtil.getRoot(context.instanceOperations().getInstanceId())
-              + Constants.ZTSERVERS + "/" + tserver);
+          var zPath = ServiceLock.path(Constants.ZTSERVERS + "/" + tserver);
           long sessionId = ServiceLock.getSessionId(context.getZooCache(), zPath);
           tservers.add(new TServerInstance(tserver, sessionId));
         } catch (Exception e) {

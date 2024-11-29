@@ -53,8 +53,7 @@ class PopulateZookeeperWithNamespace extends ManagerRepo {
     Utils.getTableNameLock().lock();
     try {
       var context = manager.getContext();
-      NamespaceMapping.put(context.getZooReaderWriter(),
-          Constants.ZNAMESPACES,
+      NamespaceMapping.put(context.getZooReaderWriter(), Constants.ZNAMESPACES,
           namespaceInfo.namespaceId, namespaceInfo.namespaceName);
       TableManager.prepareNewNamespaceState(context, namespaceInfo.namespaceId,
           namespaceInfo.namespaceName, NodeExistsPolicy.OVERWRITE);

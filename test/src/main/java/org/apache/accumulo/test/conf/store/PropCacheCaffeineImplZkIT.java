@@ -106,21 +106,27 @@ public class PropCacheCaffeineImplZkIT {
   }
 
   @BeforeEach
-  public void setupZnodes() throws Exception {
-    zrw.mkdirs(ZooUtil.getRoot(INSTANCE_ID) + Constants.ZCONFIG);
-    zooKeeper.create(ZooUtil.getRoot(INSTANCE_ID) + Constants.ZTABLES, new byte[0],
-        ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
-    zooKeeper.create(ZooUtil.getRoot(INSTANCE_ID) + Constants.ZTABLES + "/" + tIdA.canonical(),
-        new byte[0], ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
-    zooKeeper.create(
-        ZooUtil.getRoot(INSTANCE_ID) + Constants.ZTABLES + "/" + tIdA.canonical() + "/conf",
-        new byte[0], ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
+  public void setupZnodes() {
+    testZk.initPaths(Constants.ZCONFIG);
+    try {
+      zooKeeper.create(Constants.ZTABLES, new byte[0], ZooDefs.Ids.OPEN_ACL_UNSAFE,
+          CreateMode.PERSISTENT);
+      zooKeeper.create(Constants.ZTABLES + "/" + tIdA.canonical(), new byte[0],
+          ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
+      zooKeeper.create(Constants.ZTABLES + "/" + tIdA.canonical() + "/conf", new byte[0],
+          ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
 
-    zooKeeper.create(ZooUtil.getRoot(INSTANCE_ID) + Constants.ZTABLES + "/" + tIdB.canonical(),
-        new byte[0], ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
-    zooKeeper.create(
-        ZooUtil.getRoot(INSTANCE_ID) + Constants.ZTABLES + "/" + tIdB.canonical() + "/conf",
-        new byte[0], ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
+      zooKeeper.create(Constants.ZTABLES + "/" + tIdB.canonical(), new byte[0],
+          ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
+      zooKeeper.create(Constants.ZTABLES + "/" + tIdB.canonical() + "/conf", new byte[0],
+          ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
+
+    } catch (KeeperException ex) {
+      log.trace("Issue during zk initialization, skipping", ex);
+    } catch (InterruptedException ex) {
+      Thread.currentThread().interrupt();
+      throw new IllegalStateException("Interrupted during zookeeper path initialization", ex);
+    }
   }
 
   @AfterEach

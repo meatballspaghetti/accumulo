@@ -118,20 +118,28 @@ public class ZooBasedConfigIT {
   @BeforeEach
   public void initPaths() throws Exception {
     context = createMock(ServerContext.class);
-    zrw.mkdirs(ZooUtil.getRoot(INSTANCE_ID));
+    testZk.initPaths("/");
 
-    zooKeeper.create(ZooUtil.getRoot(INSTANCE_ID) + Constants.ZTABLES, new byte[0],
-        ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
+    try {
+      zooKeeper.create(Constants.ZTABLES, new byte[0], ZooDefs.Ids.OPEN_ACL_UNSAFE,
+          CreateMode.PERSISTENT);
 
-    zooKeeper.create(ZooUtil.getRoot(INSTANCE_ID) + Constants.ZTABLES + "/" + tidA.canonical(),
-        new byte[0], ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
-    zooKeeper.create(ZooUtil.getRoot(INSTANCE_ID) + Constants.ZTABLES + "/" + tidB.canonical(),
-        new byte[0], ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
+      zooKeeper.create(Constants.ZTABLES + "/" + tidA.canonical(), new byte[0],
+          ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
+      zooKeeper.create(Constants.ZTABLES + "/" + tidB.canonical(), new byte[0],
+          ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
 
-    zooKeeper.create(ZooUtil.getRoot(INSTANCE_ID) + Constants.ZNAMESPACES, new byte[0],
-        ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
-    zooKeeper.create(ZooUtil.getRoot(INSTANCE_ID) + Constants.ZNAMESPACES + "/" + nsId.canonical(),
-        new byte[0], ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
+      zooKeeper.create(Constants.ZNAMESPACES, new byte[0], ZooDefs.Ids.OPEN_ACL_UNSAFE,
+          CreateMode.PERSISTENT);
+      zooKeeper.create(Constants.ZNAMESPACES + "/" + nsId.canonical(), new byte[0],
+          ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
+
+    } catch (KeeperException ex) {
+      log.trace("Issue during zk initialization, skipping", ex);
+    } catch (InterruptedException ex) {
+      Thread.currentThread().interrupt();
+      throw new IllegalStateException("Interrupted during zookeeper path initialization", ex);
+    }
 
     ticker = new TestTicker();
 
@@ -175,8 +183,8 @@ public class ZooBasedConfigIT {
   public void upgradeSysTestNoProps() throws Exception {
     replay(context);
     // force create empty sys config node.
-    zooKeeper.create(ZooUtil.getRoot(INSTANCE_ID) + Constants.ZCONFIG, new byte[0],
-        ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
+    zooKeeper.create(Constants.ZCONFIG, new byte[0], ZooDefs.Ids.OPEN_ACL_UNSAFE,
+        CreateMode.PERSISTENT);
     var propKey = SystemPropKey.of(INSTANCE_ID);
     ZooBasedConfiguration zbc = new SystemConfiguration(context, propKey, parent);
     assertNotNull(zbc);

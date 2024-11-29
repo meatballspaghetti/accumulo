@@ -49,7 +49,6 @@ import org.apache.accumulo.core.data.Mutation;
 import org.apache.accumulo.core.data.TableId;
 import org.apache.accumulo.core.data.Value;
 import org.apache.accumulo.core.fate.zookeeper.ZooReaderWriter;
-import org.apache.accumulo.core.fate.zookeeper.ZooUtil;
 import org.apache.accumulo.core.gc.GcCandidate;
 import org.apache.accumulo.core.gc.ReferenceFile;
 import org.apache.accumulo.core.lock.ServiceLock;
@@ -412,8 +411,7 @@ public class GarbageCollectorIT extends ConfigurableMacBase {
     try (AccumuloClient client = Accumulo.newClient().from(getClientProperties()).build()) {
 
       ZooReaderWriter zk = cluster.getServerContext().getZooReaderWriter();
-      var path = ServiceLock
-          .path(ZooUtil.getRoot(client.instanceOperations().getInstanceId()) + Constants.ZGC_LOCK);
+      var path = ServiceLock.path(Constants.ZGC_LOCK);
       for (int i = 0; i < 5; i++) {
         List<String> locks;
         try {
