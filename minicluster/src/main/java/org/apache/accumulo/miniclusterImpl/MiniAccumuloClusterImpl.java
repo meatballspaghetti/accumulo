@@ -486,8 +486,6 @@ public class MiniAccumuloClusterImpl implements AccumuloCluster {
           VolumeManager.getInstanceIDFromHdfs(instanceIdPath, hadoopConf);
       ZooReaderWriter zrw = getServerContext().getZooSession().asReaderWriter();
 
-      String rootPath = ZooUtil.getRoot(instanceIdFromFile);
-
       String instanceName = null;
       try {
         for (String name : zrw.getChildren(Constants.ZROOT + Constants.ZINSTANCES)) {
@@ -506,7 +504,7 @@ public class MiniAccumuloClusterImpl implements AccumuloCluster {
       }
 
       config.setInstanceName(instanceName);
-      if (!AccumuloStatus.isAccumuloOffline(zrw, rootPath)) {
+      if (!AccumuloStatus.isAccumuloOffline(zrw, "/")) {
         throw new IllegalStateException(
             "The Accumulo instance being used is already running. Aborting.");
       }

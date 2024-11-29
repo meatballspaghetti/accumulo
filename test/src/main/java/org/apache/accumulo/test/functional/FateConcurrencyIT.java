@@ -248,9 +248,9 @@ public class FateConcurrencyIT extends AccumuloClusterHarness {
         InstanceId instanceId = context.getInstanceID();
 
         var zk = context.getZooSession();
-        ZooStore<String> zs = new ZooStore<>(ZooUtil.getRoot(instanceId) + Constants.ZFATE, zk);
+        ZooStore<String> zs = new ZooStore<>(Constants.ZFATE, zk);
         var lockPath =
-            ServiceLock.path(ZooUtil.getRoot(instanceId) + Constants.ZTABLE_LOCKS + "/" + tableId);
+            ServiceLock.path(Constants.ZTABLE_LOCKS + "/" + tableId);
 
         withLocks = admin.getStatus(zs, zk, lockPath, null, null);
 
@@ -338,9 +338,9 @@ public class FateConcurrencyIT extends AccumuloClusterHarness {
 
       InstanceId instanceId = context.getInstanceID();
       var zk = context.getZooSession();
-      ZooStore<String> zs = new ZooStore<>(ZooUtil.getRoot(instanceId) + Constants.ZFATE, zk);
+      ZooStore<String> zs = new ZooStore<>(Constants.ZFATE, zk);
       var lockPath =
-          ServiceLock.path(ZooUtil.getRoot(instanceId) + Constants.ZTABLE_LOCKS + "/" + tableId);
+          ServiceLock.path(Constants.ZTABLE_LOCKS + "/" + tableId);
       AdminUtil.FateStatus fateStatus = admin.getStatus(zs, zk, lockPath, null, null);
 
       log.trace("current fates: {}", fateStatus.getTransactions().size());

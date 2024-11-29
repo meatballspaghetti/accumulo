@@ -261,8 +261,6 @@ public class ZooInfoViewerTest {
     var mockTableIdMap = Map.of(TableId.of("t"), "t_table");
     expect(context.getTableIdToNameMap()).andReturn(mockTableIdMap).once();
 
-    var tBasePath = ZooUtil.getRoot(iid) + ZTABLES;
-
     var tProps = new VersionedProperties(123, Instant.now(), Map.of("t1", "tv1"));
     var tPropBytes = propCodec.toBytes(tProps);
     TableId tid = TableId.of("t");
@@ -278,7 +276,7 @@ public class ZooInfoViewerTest {
           return tPropBytes;
         }).once();
 
-    expect(zk.getData(tBasePath + "/t" + ZTABLE_NAMESPACE, null, null))
+    expect(zk.getData("/t" + ZTABLE_NAMESPACE, null, null))
         .andReturn("+default".getBytes(UTF_8)).anyTimes();
 
     replay(context, zk);

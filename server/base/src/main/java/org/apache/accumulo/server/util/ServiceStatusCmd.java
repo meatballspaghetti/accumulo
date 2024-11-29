@@ -65,15 +65,20 @@ public class ServiceStatusCmd {
 
     final Map<ServiceStatusReport.ReportKey,StatusSummary> services = new TreeMap<>();
 
-    services.put(ServiceStatusReport.ReportKey.MANAGER, getStatusSummary(ServiceStatusReport.ReportKey.MANAGER, zooReader, Constants.ZMANAGER_LOCK));
-    services.put(ServiceStatusReport.ReportKey.MONITOR, getStatusSummary(ServiceStatusReport.ReportKey.MONITOR, zooReader, Constants.ZMONITOR_LOCK));
-    services.put(ServiceStatusReport.ReportKey.T_SERVER, getServerHostStatus(zooReader, Constants.ZTSERVERS, ServiceStatusReport.ReportKey.T_SERVER, TSERV));
-    services.put(ServiceStatusReport.ReportKey.S_SERVER, getServerHostStatus(zooReader, Constants.ZSSERVERS, ServiceStatusReport.ReportKey.S_SERVER,
-            TABLET_SCAN));
-    services.put(ServiceStatusReport.ReportKey.COORDINATOR,
-            getStatusSummary(ServiceStatusReport.ReportKey.COORDINATOR, zooReader, Constants.ZCOORDINATOR_LOCK));
-    services.put(ServiceStatusReport.ReportKey.COMPACTOR, getCompactorHosts(zooReader, Constants.ZCOMPACTORS));
-    services.put(ServiceStatusReport.ReportKey.GC, getStatusSummary(ServiceStatusReport.ReportKey.GC, zooReader, Constants.ZGC_LOCK));
+    services.put(ServiceStatusReport.ReportKey.MANAGER, getStatusSummary(
+        ServiceStatusReport.ReportKey.MANAGER, zooReader, Constants.ZMANAGER_LOCK));
+    services.put(ServiceStatusReport.ReportKey.MONITOR, getStatusSummary(
+        ServiceStatusReport.ReportKey.MONITOR, zooReader, Constants.ZMONITOR_LOCK));
+    services.put(ServiceStatusReport.ReportKey.T_SERVER, getServerHostStatus(zooReader,
+        Constants.ZTSERVERS, ServiceStatusReport.ReportKey.T_SERVER, TSERV));
+    services.put(ServiceStatusReport.ReportKey.S_SERVER, getServerHostStatus(zooReader,
+        Constants.ZSSERVERS, ServiceStatusReport.ReportKey.S_SERVER, TABLET_SCAN));
+    services.put(ServiceStatusReport.ReportKey.COORDINATOR, getStatusSummary(
+        ServiceStatusReport.ReportKey.COORDINATOR, zooReader, Constants.ZCOORDINATOR_LOCK));
+    services.put(ServiceStatusReport.ReportKey.COMPACTOR,
+        getCompactorHosts(zooReader, Constants.ZCOMPACTORS));
+    services.put(ServiceStatusReport.ReportKey.GC,
+        getStatusSummary(ServiceStatusReport.ReportKey.GC, zooReader, Constants.ZGC_LOCK));
 
     ServiceStatusReport report = new ServiceStatusReport(services, opts.noHosts);
 
