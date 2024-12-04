@@ -215,6 +215,7 @@ public class TableManager {
       throws KeeperException, InterruptedException {
     prepareNewTableState(zoo, context.getPropStore(), instanceID, tableId, namespaceId, tableName,
         TableState.NEW, NodeExistsPolicy.OVERWRITE);
+
     String srcTablePath = Constants.ZTABLES + "/" + srcTableId + Constants.ZCONFIG;
     String newTablePath = Constants.ZTABLES + "/" + tableId + Constants.ZCONFIG;
     zoo.recursiveCopyPersistentOverwrite(srcTablePath, newTablePath);

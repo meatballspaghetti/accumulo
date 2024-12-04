@@ -80,7 +80,7 @@ public class ZooPropStoreTest {
     expect(zk.getSessionTimeout()).andReturn(2_000).anyTimes();
     expect(context.getInstanceID()).andReturn(instanceId).anyTimes();
 
-    expect(zrw.exists(eq(ZooUtil.getRoot(instanceId)), anyObject())).andReturn(true).anyTimes();
+    expect(zrw.exists(eq("/"), anyObject())).andReturn(true).anyTimes();
   }
 
   @AfterEach

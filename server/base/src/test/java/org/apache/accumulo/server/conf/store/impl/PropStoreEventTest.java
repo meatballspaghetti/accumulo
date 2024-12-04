@@ -77,7 +77,7 @@ public class PropStoreEventTest {
     expect(context.getZooKeepersSessionTimeOut()).andReturn(500).anyTimes();
     expect(context.getInstanceID()).andReturn(instanceId).anyTimes();
 
-    expect(zrw.exists(eq(ZooUtil.getRoot(instanceId)), anyObject())).andReturn(true).anyTimes();
+    expect(zrw.exists(eq("/"), anyObject())).andReturn(true).anyTimes();
 
     readyMonitor = createMock(ReadyMonitor.class);
   }
