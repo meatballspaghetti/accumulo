@@ -170,7 +170,7 @@ public class ScanServerGroupConfigurationIT extends SharedMiniClusterBase {
         // and the scripts need to be updated.
         getCluster()._exec(ScanServer.class, ServerType.SCAN_SERVER, Map.of(),
             new String[] {"-o", "sserver.group=GROUP1"});
-        Wait.waitFor(() -> zk.getChildren(scanServerRoot, false).size() == 2);
+        Wait.waitFor(() -> zk.getChildren(Constants.ZSSERVERS, false).size() == 2);
         Wait.waitFor(() -> ((ClientContext) client).getScanServers().values().stream().anyMatch(
             (p) -> p.getSecond().equals(ScanServerSelector.DEFAULT_SCAN_SERVER_GROUP_NAME))
             == true);
