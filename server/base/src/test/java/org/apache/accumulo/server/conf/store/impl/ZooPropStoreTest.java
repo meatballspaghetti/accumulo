@@ -379,9 +379,9 @@ public class ZooPropStoreTest {
     }
   }
 
-  private static class TestWatcher extends PropStoreWatcher {
+  private class TestWatcher extends PropStoreWatcher {
     public TestWatcher(ReadyMonitor zkReadyMonitor) {
-      super(zkReadyMonitor);
+      super(zkReadyMonitor, instanceId);
     }
   }
 

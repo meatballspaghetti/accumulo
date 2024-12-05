@@ -147,9 +147,9 @@ public class ZKAuthenticatorTest {
     expect(context.zkUserPath()).andReturn(ZooUtil.getRoot(instanceId) + Constants.ZUSERS)
         .anyTimes();
     expect(zk.getChildren(anyObject(), anyObject())).andReturn(Arrays.asList(principal)).anyTimes();
-    expect(zk.exists(matches(ZooUtil.getRoot(instanceId) + Constants.ZUSERS + "/" + principal),
+    expect(zk.exists(matches(Constants.ZUSERS + "/" + principal),
         anyObject(Watcher.class))).andReturn(new Stat()).anyTimes();
-    expect(zk.getData(matches(ZooUtil.getRoot(instanceId) + Constants.ZUSERS + "/" + principal),
+    expect(zk.getData(matches(Constants.ZUSERS + "/" + principal),
         anyObject(), anyObject())).andReturn(newHash).once();
     replay(context, zk);
 
