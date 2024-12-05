@@ -453,9 +453,6 @@ public class ServerContext extends ClientContext {
     return securityOperation.get();
   }
 
-  public String zkUserPath() {
-    return Constants.ZUSERS;
-  }
 
   public LowMemoryDetector getLowMemoryDetector() {
     return lowMemoryDetector.get();

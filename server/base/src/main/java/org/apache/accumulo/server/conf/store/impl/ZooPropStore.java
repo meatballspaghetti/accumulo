@@ -85,7 +85,8 @@ public class ZooPropStore implements PropStore, PropChangeListener {
     this.zkReadyMon = requireNonNullElseGet(monitor,
         () -> new ReadyMonitor("prop-store", Math.round(zrw.getSessionTimeout() * 1.75)));
 
-    this.propStoreWatcher = requireNonNullElseGet(watcher, () -> new PropStoreWatcher(zkReadyMon));
+    this.propStoreWatcher =
+        requireNonNullElseGet(watcher, () -> new PropStoreWatcher(zkReadyMon, instanceId));
 
     ZooPropLoader propLoader = new ZooPropLoader(zrw, codec, this.propStoreWatcher);
 

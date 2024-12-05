@@ -148,11 +148,11 @@ public class ZKAuthenticatorTest {
     expect(context.getZooReader()).andReturn(zr).anyTimes();
     ZooKeeper zk = createMock(ZooKeeper.class);
     expect(zk.getChildren(anyObject(), anyObject())).andReturn(Arrays.asList(principal)).anyTimes();
-    expect(zk.exists(matches(ZooUtil.getRoot(instanceId) + Constants.ZUSERS + "/" + principal),
-        anyObject(Watcher.class))).andReturn(new Stat()).anyTimes();
+    expect(zk.exists(matches("/users/" + principal), anyObject(Watcher.class)))
+        .andReturn(new Stat()).anyTimes();
     expect(zr.getZooKeeper()).andReturn(zk).anyTimes();
-    expect(zk.getData(matches(ZooUtil.getRoot(instanceId) + Constants.ZUSERS + "/" + principal),
-        anyObject(), anyObject())).andReturn(newHash).once();
+    expect(zk.getData(matches("/users/" + principal), anyObject(), anyObject())).andReturn(newHash)
+        .once();
     replay(context, zr, zk);
 
     // creating authenticator

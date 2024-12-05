@@ -176,7 +176,7 @@ public class Upgrader10to11 implements Upgrader {
 
   private boolean checkReplicationTableInZk(final InstanceId iid, final ZooReaderWriter zrw) {
     try {
-      String path = buildRepTablePath(iid);
+      String path = buildRepTablePath();
       return zrw.exists(path);
     } catch (KeeperException ex) {
       throw new IllegalStateException("ZooKeeper error - cannot determine replication table status",
@@ -196,7 +196,7 @@ public class Upgrader10to11 implements Upgrader {
    */
   private boolean checkReplicationOffline(final InstanceId iid, final ZooReaderWriter zrw) {
     try {
-      String path = buildRepTablePath(iid) + ZTABLE_STATE;
+      String path = buildRepTablePath() + ZTABLE_STATE;
       byte[] bytes = zrw.getData(path);
       if (bytes != null && bytes.length > 0) {
         String status = new String(bytes, UTF_8);
@@ -214,14 +214,14 @@ public class Upgrader10to11 implements Upgrader {
 
   /**
    * Utility method to build the ZooKeeper replication table path. The path resolves to
-   * {@code /accumulo/INSTANCE_ID/tables/+rep}
+   * {@code /tables/+rep}
    */
-  static String buildRepTablePath(final InstanceId iid) {
-    return ZooUtil.getRoot(iid) + ZTABLES + "/" + REPLICATION_ID.canonical();
+  static String buildRepTablePath() {
+    return ZTABLES + "/" + REPLICATION_ID.canonical();
   }
 
   private void deleteReplicationTableZkEntries(ZooReaderWriter zrw, InstanceId iid) {
-    String repTablePath = buildRepTablePath(iid);
+    String repTablePath = buildRepTablePath();
     try {
       zrw.recursiveDelete(repTablePath, ZooUtil.NodeMissingPolicy.SKIP);
     } catch (KeeperException ex) {

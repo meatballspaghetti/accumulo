@@ -153,7 +153,7 @@ public class PropCacheCaffeineImplZkIT {
 
     ReadyMonitor readyMonitor = new ReadyMonitor("test", zooKeeper.getSessionTimeout());
 
-    PropStoreWatcher propStoreWatcher = new PropStoreWatcher(readyMonitor);
+    PropStoreWatcher propStoreWatcher = new PropStoreWatcher(readyMonitor, INSTANCE_ID);
 
     ZooPropLoader propLoader =
         new ZooPropLoader(zrw, VersionedPropCodec.getDefault(), propStoreWatcher);
