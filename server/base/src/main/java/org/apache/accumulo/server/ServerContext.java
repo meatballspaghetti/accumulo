@@ -449,7 +449,6 @@ public class ServerContext extends ClientContext {
     return securityOperation.get();
   }
 
-
   public LowMemoryDetector getLowMemoryDetector() {
     return lowMemoryDetector.get();
   }
