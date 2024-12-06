@@ -119,13 +119,14 @@ public class PropStoreKeyTest {
     assertNull(PropStoreKey.fromPath("/foo", instanceId));
     assertNull(PropStoreKey.fromPath(ZCONFIG + "/foo", instanceId));
 
-    assertTrue(PropStoreKey.fromPath(ZTABLES + "/a" + ZCONFIG, instanceId) instanceof TablePropKey);
+    assertInstanceOf(TablePropKey.class,
+        PropStoreKey.fromPath(ZTABLES + "/a" + ZCONFIG, instanceId));
     assertNull(PropStoreKey.fromPath(ZTABLES + ZCONFIG, instanceId));
     assertNull(PropStoreKey.fromPath("/invalid/a" + ZCONFIG, instanceId));
     assertNull(PropStoreKey.fromPath(ZTABLES + "/a" + ZCONFIG + "/foo", instanceId));
 
-    assertTrue(PropStoreKey.fromPath(ZNAMESPACES + "/a" + ZCONFIG,
-        instanceId) instanceof NamespacePropKey);
+    assertInstanceOf(NamespacePropKey.class,
+        PropStoreKey.fromPath(ZNAMESPACES + "/a" + ZCONFIG, instanceId));
     assertNull(PropStoreKey.fromPath(ZNAMESPACES + ZCONFIG, instanceId));
     assertNull(PropStoreKey.fromPath("/invalid/a" + ZCONFIG, instanceId));
     assertNull(PropStoreKey.fromPath(ZNAMESPACES + "/a" + ZCONFIG + "/foo", instanceId));
