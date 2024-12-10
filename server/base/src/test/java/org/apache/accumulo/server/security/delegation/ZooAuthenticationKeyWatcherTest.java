@@ -78,7 +78,7 @@ public class ZooAuthenticationKeyWatcherTest {
   public void setupMocks() {
     zk = createMock(ZooSession.class);
     instanceId = InstanceId.of(UUID.randomUUID());
-    baseNode = ZooUtil.getRoot(instanceId) + Constants.ZDELEGATION_TOKEN_KEYS;
+    baseNode = Constants.ZDELEGATION_TOKEN_KEYS;
     secretManager = new AuthenticationTokenSecretManager(instanceId, tokenLifetime);
     keyWatcher = new ZooAuthenticationKeyWatcher(secretManager, zk, baseNode);
   }

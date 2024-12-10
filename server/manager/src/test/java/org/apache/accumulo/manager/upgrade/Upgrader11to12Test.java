@@ -354,7 +354,6 @@ public class Upgrader11to12Test {
     ServerContext context = createMock(ServerContext.class);
     ZooSession zk = createStrictMock(ZooSession.class);
     ZooReaderWriter zrw = createStrictMock(ZooReaderWriter.class);
-    final var zkRoot = ZooUtil.getRoot(iid);
 
     expect(context.getInstanceID()).andReturn(iid).anyTimes();
     expect(context.getZooSession()).andReturn(zk).anyTimes();

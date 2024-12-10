@@ -45,11 +45,10 @@ public class BackupManagerIT extends ConfigurableMacBase {
     // create a backup
     Process backup = exec(Manager.class);
     try (AccumuloClient client = Accumulo.newClient().from(getClientProperties()).build()) {
-      ZooReaderWriter writer = getServerContext().getZooSession().asReaderWriter();
-      String root = getCluster().getServerContext().getZooKeeperRoot();
+      ZooReaderWriter writer = getCluster().getServerContext().getZooSession().asReaderWriter();
 
       // wait for 2 lock entries
-      var path = ServiceLock.path(root + Constants.ZMANAGER_LOCK);
+      var path = ServiceLock.path(Constants.ZMANAGER_LOCK);
       Wait.waitFor(
           () -> ServiceLock.validateAndSort(path, writer.getChildren(path.toString())).size() == 2);
 
@@ -58,7 +57,7 @@ public class BackupManagerIT extends ConfigurableMacBase {
       // generate a false zookeeper event
       List<String> children =
           ServiceLock.validateAndSort(path, writer.getChildren(path.toString()));
-      String lockPath = root + Constants.ZMANAGER_LOCK + "/" + children.get(0);
+      String lockPath = Constants.ZMANAGER_LOCK + "/" + children.get(0);
       byte[] data = writer.getData(lockPath);
       getServerContext().getZooSession().setData(lockPath, data, -1);
       // let it propagate

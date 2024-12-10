@@ -184,7 +184,6 @@ public class FateIT {
   private static ZooSession zk = null;
   private static ZooReaderWriter zrw = null;
   private static final InstanceId IID = InstanceId.of(UUID.randomUUID());
-  private static final String ZK_ROOT = ZooUtil.getRoot(IID);
   private static final NamespaceId NS = NamespaceId.of("testNameSpace");
   private static final TableId TID = TableId.of("testTable");
 
@@ -201,11 +200,11 @@ public class FateIT {
     testZk = new ZooKeeperTestingServer(tempDir);
     zk = testZk.newClient();
     zrw = zk.asReaderWriter();
-    zrw.mkdirs(ZK_ROOT + Constants.ZFATE);
-    zrw.mkdirs(ZK_ROOT + Constants.ZTABLE_LOCKS);
-    zrw.mkdirs(ZK_ROOT + Constants.ZNAMESPACES + "/" + NS.canonical());
-    zrw.mkdirs(ZK_ROOT + Constants.ZTABLE_STATE + "/" + TID.canonical());
-    zrw.mkdirs(ZK_ROOT + Constants.ZTABLES + "/" + TID.canonical());
+    zrw.mkdirs(Constants.ZFATE);
+    zrw.mkdirs(Constants.ZTABLE_LOCKS);
+    zrw.mkdirs(Constants.ZNAMESPACES + "/" + NS.canonical());
+    zrw.mkdirs(Constants.ZTABLE_STATE + "/" + TID.canonical());
+    zrw.mkdirs(Constants.ZTABLES + "/" + TID.canonical());
   }
 
   @AfterAll
@@ -221,7 +220,7 @@ public class FateIT {
   @Timeout(30)
   public void testTransactionStatus() throws Exception {
 
-    final ZooStore<Manager> zooStore = new ZooStore<>(ZK_ROOT + Constants.ZFATE, zk);
+    final ZooStore<Manager> zooStore = new ZooStore<>(Constants.ZFATE, zk);
     final AgeOffStore<Manager> store = new AgeOffStore<>(zooStore, 3000, System::currentTimeMillis);
 
     Manager manager = createMock(Manager.class);
@@ -292,7 +291,7 @@ public class FateIT {
 
   @Test
   public void testCancelWhileNew() throws Exception {
-    final ZooStore<Manager> zooStore = new ZooStore<>(ZK_ROOT + Constants.ZFATE, zk);
+    final ZooStore<Manager> zooStore = new ZooStore<>(Constants.ZFATE, zk);
     final AgeOffStore<Manager> store = new AgeOffStore<>(zooStore, 3000, System::currentTimeMillis);
 
     Manager manager = createMock(Manager.class);
@@ -331,7 +330,7 @@ public class FateIT {
 
   @Test
   public void testCancelWhileSubmittedAndRunning() throws Exception {
-    final ZooStore<Manager> zooStore = new ZooStore<>(ZK_ROOT + Constants.ZFATE, zk);
+    final ZooStore<Manager> zooStore = new ZooStore<>(Constants.ZFATE, zk);
     final AgeOffStore<Manager> store = new AgeOffStore<>(zooStore, 3000, System::currentTimeMillis);
 
     Manager manager = createMock(Manager.class);
@@ -372,7 +371,7 @@ public class FateIT {
 
   @Test
   public void testCancelWhileInCall() throws Exception {
-    final ZooStore<Manager> zooStore = new ZooStore<>(ZK_ROOT + Constants.ZFATE, zk);
+    final ZooStore<Manager> zooStore = new ZooStore<>(Constants.ZFATE, zk);
     final AgeOffStore<Manager> store = new AgeOffStore<>(zooStore, 3000, System::currentTimeMillis);
 
     Manager manager = createMock(Manager.class);
@@ -418,7 +417,7 @@ public class FateIT {
      * is called and throws an exception (in call() or isReady()). It is then expected that: 1)
      * undo() is called on Repo3, 2) undo() is called on Repo2, 3) undo() is called on Repo1
      */
-    final ZooStore<Manager> zooStore = new ZooStore<>(ZK_ROOT + Constants.ZFATE, zk);
+    final ZooStore<Manager> zooStore = new ZooStore<>(Constants.ZFATE, zk);
     final AgeOffStore<Manager> store = new AgeOffStore<>(zooStore, 3000, System::currentTimeMillis);
 
     Manager manager = createMock(Manager.class);
@@ -482,8 +481,8 @@ public class FateIT {
    */
   private static TStatus getTxStatus(ZooReaderWriter zrw, long txid)
       throws KeeperException, InterruptedException {
-    zrw.sync(ZK_ROOT);
-    String txdir = String.format("%s%s/tx_%016x", ZK_ROOT, Constants.ZFATE, txid);
+    zrw.sync("/");
+    String txdir = String.format("%s%s/tx_%016x", Constants.ZFATE, txid);
     return TStatus.valueOf(new String(zrw.getData(txdir), UTF_8));
   }
 

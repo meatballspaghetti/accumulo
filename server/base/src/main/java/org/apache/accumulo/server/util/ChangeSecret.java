@@ -226,7 +226,7 @@ public class ChangeSecret {
         (int) conf.getTimeInMillis(Property.INSTANCE_ZK_TIMEOUT), oldPass)) {
 
       var orig = oldZk.asReaderWriter();
-      orig.recursiveDelete(context.getZooKeeperRoot(), NodeMissingPolicy.SKIP);
+      orig.recursiveDelete("/", NodeMissingPolicy.SKIP);
     }
   }
 }
