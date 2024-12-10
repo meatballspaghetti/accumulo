@@ -200,6 +200,6 @@ public class ChangeSecret {
 
   private static void deleteInstance(ServerContext context, String oldPass) throws Exception {
     ZooReaderWriter orig = context.getZooReader().asWriter(oldPass);
-    orig.recursiveDelete(context.getZooKeeperRoot(), NodeMissingPolicy.SKIP);
+    orig.recursiveDelete("/", NodeMissingPolicy.SKIP);
   }
 }

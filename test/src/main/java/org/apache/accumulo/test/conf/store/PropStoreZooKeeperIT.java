@@ -104,37 +104,28 @@ public class PropStoreZooKeeperIT {
     var zrw = testZk.getZooReaderWriter();
     instanceId = InstanceId.of(UUID.randomUUID());
     context = EasyMock.createNiceMock(ServerContext.class);
-    expect(context.getInstanceID()).andReturn(instanceId).anyTimes();
     expect(context.getZooReaderWriter()).andReturn(zrw).anyTimes();
 
     replay(context);
 
-    testZk.initPaths(Constants.ZCONFIG);
-    try {
-      zooKeeper.create(Constants.ZTABLES, new byte[0], ZooDefs.Ids.OPEN_ACL_UNSAFE,
-          CreateMode.PERSISTENT);
-      zooKeeper.create(Constants.ZTABLES + "/" + tIdA.canonical(), new byte[0],
-          ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
-      zooKeeper.create(Constants.ZTABLES + "/" + tIdA.canonical() + "/conf", new byte[0],
-          ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
+    zrw.mkdirs(Constants.ZCONFIG);
+    zooKeeper.create(Constants.ZTABLES, new byte[0], ZooDefs.Ids.OPEN_ACL_UNSAFE,
+        CreateMode.PERSISTENT);
+    zooKeeper.create(Constants.ZTABLES + "/" + tIdA.canonical(), new byte[0],
+        ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
+    zooKeeper.create(Constants.ZTABLES + "/" + tIdA.canonical() + "/conf", new byte[0],
+        ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
 
-      zooKeeper.create(Constants.ZTABLES + "/" + tIdB.canonical(), new byte[0],
-          ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
-      zooKeeper.create(Constants.ZTABLES + "/" + tIdB.canonical() + "/conf", new byte[0],
-          ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
-
-    } catch (KeeperException ex) {
-      log.trace("Issue during zk initialization, skipping", ex);
-    } catch (InterruptedException ex) {
-      Thread.currentThread().interrupt();
-      throw new IllegalStateException("Interrupted during zookeeper path initialization", ex);
-    }
+    zooKeeper.create(Constants.ZTABLES + "/" + tIdB.canonical(), new byte[0],
+        ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
+    zooKeeper.create(Constants.ZTABLES + "/" + tIdB.canonical() + "/conf", new byte[0],
+        ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
     propStore = ZooPropStore.initialize(instanceId, context.getZooReaderWriter());
   }
 
   @AfterEach
   public void cleanupZnodes() throws Exception {
-    ZKUtil.deleteRecursive(zooKeeper, "/accumulo");
+    ZKUtil.deleteRecursive(zooKeeper, "/");
   }
 
   /**

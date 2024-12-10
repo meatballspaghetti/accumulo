@@ -118,28 +118,20 @@ public class ZooBasedConfigIT {
   @BeforeEach
   public void initPaths() throws Exception {
     context = createMock(ServerContext.class);
-    testZk.initPaths("/");
+    zrw.mkdirs("/");
 
-    try {
-      zooKeeper.create(Constants.ZTABLES, new byte[0], ZooDefs.Ids.OPEN_ACL_UNSAFE,
-          CreateMode.PERSISTENT);
+    zooKeeper.create(Constants.ZTABLES, new byte[0], ZooDefs.Ids.OPEN_ACL_UNSAFE,
+        CreateMode.PERSISTENT);
 
-      zooKeeper.create(Constants.ZTABLES + "/" + tidA.canonical(), new byte[0],
-          ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
-      zooKeeper.create(Constants.ZTABLES + "/" + tidB.canonical(), new byte[0],
-          ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
+    zooKeeper.create(Constants.ZTABLES + "/" + tidA.canonical(), new byte[0],
+        ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
+    zooKeeper.create(Constants.ZTABLES + "/" + tidB.canonical(), new byte[0],
+        ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
 
-      zooKeeper.create(Constants.ZNAMESPACES, new byte[0], ZooDefs.Ids.OPEN_ACL_UNSAFE,
-          CreateMode.PERSISTENT);
-      zooKeeper.create(Constants.ZNAMESPACES + "/" + nsId.canonical(), new byte[0],
-          ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
-
-    } catch (KeeperException ex) {
-      log.trace("Issue during zk initialization, skipping", ex);
-    } catch (InterruptedException ex) {
-      Thread.currentThread().interrupt();
-      throw new IllegalStateException("Interrupted during zookeeper path initialization", ex);
-    }
+    zooKeeper.create(Constants.ZNAMESPACES, new byte[0], ZooDefs.Ids.OPEN_ACL_UNSAFE,
+        CreateMode.PERSISTENT);
+    zooKeeper.create(Constants.ZNAMESPACES + "/" + nsId.canonical(), new byte[0],
+        ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
 
     ticker = new TestTicker();
 
@@ -171,7 +163,7 @@ public class ZooBasedConfigIT {
 
   @AfterEach
   public void cleanupZnodes() throws Exception {
-    ZKUtil.deleteRecursive(zooKeeper, "/accumulo");
+    ZKUtil.deleteRecursive(zooKeeper, "/");
     verify(context);
   }
 
