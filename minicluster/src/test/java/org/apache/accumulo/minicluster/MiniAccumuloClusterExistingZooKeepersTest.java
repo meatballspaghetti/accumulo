@@ -26,6 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.io.File;
 import java.util.Map;
 
+import org.apache.accumulo.core.Constants;
 import org.apache.accumulo.core.client.Accumulo;
 import org.apache.accumulo.core.client.AccumuloClient;
 import org.apache.commons.io.FileUtils;
@@ -74,7 +75,8 @@ public class MiniAccumuloClusterExistingZooKeepersTest extends WithTestNames {
         Map<String,String> tableIds = client.tableOperations().tableIdMap();
         assertTrue(tableIds.containsKey(tableName));
 
-        String zkTablePath = String.format("/tables/%s/name", tableIds.get(tableName));
+        String zkTablePath =
+            String.format("/%s/%s/name", Constants.ZTABLES, tableIds.get(tableName));
         try (CuratorFramework curatorClient =
             CuratorFrameworkFactory.newClient(zooKeeper.getConnectString(), new RetryOneTime(1))) {
           curatorClient.start();
