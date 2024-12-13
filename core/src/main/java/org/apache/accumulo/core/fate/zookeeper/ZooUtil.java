@@ -198,9 +198,8 @@ public class ZooUtil {
       instanceIdString = new String(data, UTF_8);
       // verify that the instanceId found via the instanceName actually exists as an instance
       if (zoo.getData(Constants.ZROOT + "/" + instanceIdString, false, null) == null) {
-        throw new RuntimeException("Instance id " + instanceIdString
-            + (instanceName == null ? "" : " pointed to by the name " + instanceName)
-            + " does not exist in zookeeper");
+        throw new RuntimeException("Instance id " + instanceIdString + " pointed to by the name "
+            + instanceName + " does not exist in zookeeper");
       }
     } catch (InterruptedException e) {
       Thread.currentThread().interrupt();
