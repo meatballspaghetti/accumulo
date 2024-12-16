@@ -504,7 +504,7 @@ public class MiniAccumuloClusterImpl implements AccumuloCluster {
       }
 
       config.setInstanceName(instanceName);
-      if (!AccumuloStatus.isAccumuloOffline(zrw, "/")) {
+      if (!AccumuloStatus.isAccumuloOffline(zrw, ZooUtil.getRoot(instanceIdFromFile))) {
         throw new IllegalStateException(
             "The Accumulo instance being used is already running. Aborting.");
       }
