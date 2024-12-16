@@ -86,7 +86,6 @@ public class WalStateManager {
     UNREFERENCED
   }
 
-  private final ClientContext context;
   private final ZooReaderWriter zoo;
 
   private volatile boolean checkedExistance = false;
