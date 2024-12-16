@@ -225,7 +225,8 @@ public class ClientContext implements AccumuloClient {
     this.hadoopConf = info.getHadoopConf();
     instanceIdSupplier = memoize(() -> ZooUtil.getInstanceID(info.getZooKeepers(),
         info.getZooKeepersSessionTimeOut(), info.getInstanceName()));
-    final String connectString = info.getZooKeepers() + Constants.ZROOT + "/" + instanceIdSupplier;
+    final String connectString =
+        info.getZooKeepers() + Constants.ZROOT + "/" + instanceIdSupplier.get();
     zooReader = new ZooReader(connectString, info.getZooKeepersSessionTimeOut());
     zooCache = new ZooCacheFactory().getZooCache(connectString, info.getZooKeepersSessionTimeOut());
     this.serverConf = serverConf;
