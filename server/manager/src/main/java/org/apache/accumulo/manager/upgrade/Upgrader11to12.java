@@ -303,7 +303,7 @@ public class Upgrader11to12 implements Upgrader {
   private static final String ZPROBLEMS = "/problems";
 
   private void removeZKProblemReports(ServerContext context) {
-    String zpath = context.getZooKeeperRoot() + ZPROBLEMS;
+    String zpath = ZPROBLEMS;
     try {
       if (!context.getZooSession().asReaderWriter().exists(zpath)) {
         // could be running a second time and the node was already deleted
@@ -418,7 +418,7 @@ public class Upgrader11to12 implements Upgrader {
       String problemType = dis.readUTF();
       String resource = dis.readUTF();
 
-      String zpath = context.getZooKeeperRoot() + ZPROBLEMS + "/" + node;
+      String zpath = ZPROBLEMS + "/" + node;
       byte[] enc = context.getZooSession().asReaderWriter().getData(zpath);
 
       return new ProblemReport(tableId, ProblemType.valueOf(problemType), resource, enc);

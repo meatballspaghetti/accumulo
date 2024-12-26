@@ -393,7 +393,7 @@ public class Upgrader11to12Test {
       expectLastCall().once();
     }
 
-    expect(zrw.exists(zkRoot + "/problems")).andReturn(false).once();
+    expect(zrw.exists("/problems")).andReturn(false).once();
 
     replay(context, zk, zrw);
 
