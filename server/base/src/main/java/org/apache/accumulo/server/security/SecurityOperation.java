@@ -102,7 +102,8 @@ public class SecurityOperation {
   protected SecurityOperation(ServerContext context, Authorizor author, Authenticator authent,
       PermissionHandler pm) {
     this.context = context;
-    rootUserName = Suppliers.memoize(() -> new String(context.getZooCache().get(Constants.ZUSERS), UTF_8));
+    rootUserName =
+        Suppliers.memoize(() -> new String(context.getZooCache().get(Constants.ZUSERS), UTF_8));
     authorizor = author;
     authenticator = authent;
     permHandle = pm;

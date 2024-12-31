@@ -55,7 +55,6 @@ import org.apache.accumulo.core.fate.Repo;
 import org.apache.accumulo.core.fate.ZooStore;
 import org.apache.accumulo.core.fate.zookeeper.DistributedReadWriteLock.LockType;
 import org.apache.accumulo.core.fate.zookeeper.ZooReaderWriter;
-import org.apache.accumulo.core.fate.zookeeper.ZooUtil;
 import org.apache.accumulo.core.zookeeper.ZooSession;
 import org.apache.accumulo.manager.Manager;
 import org.apache.accumulo.manager.tableOps.ManagerRepo;
@@ -181,7 +180,6 @@ public class FateIT {
   private static ZooKeeperTestingServer testZk = null;
   private static ZooSession zk = null;
   private static ZooReaderWriter zrw = null;
-  private static final InstanceId IID = InstanceId.of(UUID.randomUUID());
   private static final NamespaceId NS = NamespaceId.of("testNameSpace");
   private static final TableId TID = TableId.of("testTable");
 

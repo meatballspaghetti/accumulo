@@ -21,7 +21,6 @@ package org.apache.accumulo.server.conf.util;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.apache.accumulo.core.Constants.ZINSTANCES;
 import static org.apache.accumulo.core.Constants.ZROOT;
-import static org.apache.accumulo.core.Constants.ZTABLES;
 import static org.apache.accumulo.core.Constants.ZTABLE_NAMESPACE;
 import static org.easymock.EasyMock.capture;
 import static org.easymock.EasyMock.createMock;
@@ -47,7 +46,6 @@ import java.util.UUID;
 import org.apache.accumulo.core.data.InstanceId;
 import org.apache.accumulo.core.data.NamespaceId;
 import org.apache.accumulo.core.data.TableId;
-import org.apache.accumulo.core.fate.zookeeper.ZooUtil;
 import org.apache.accumulo.core.zookeeper.ZooSession;
 import org.apache.accumulo.server.MockServerContext;
 import org.apache.accumulo.server.conf.codec.VersionedPropCodec;
@@ -276,8 +274,8 @@ public class ZooInfoViewerTest {
           return tPropBytes;
         }).once();
 
-    expect(zk.getData("/t" + ZTABLE_NAMESPACE, null, null))
-        .andReturn("+default".getBytes(UTF_8)).anyTimes();
+    expect(zk.getData("/t" + ZTABLE_NAMESPACE, null, null)).andReturn("+default".getBytes(UTF_8))
+        .anyTimes();
 
     replay(context, zk);
 

@@ -181,8 +181,8 @@ public class HalfDeadServerWatcherIT extends AccumuloClusterHarness {
 
       // Delete the lock for the TabletServer
       final ServerContext ctx = getServerContext();
-      ctx.getZooSession().asReaderWriter().recursiveDelete(
-          Constants.ZTSERVERS + "/" + tservers.get(0), NodeMissingPolicy.FAIL);
+      ctx.getZooSession().asReaderWriter()
+          .recursiveDelete(Constants.ZTSERVERS + "/" + tservers.get(0), NodeMissingPolicy.FAIL);
 
       Wait.waitFor(() -> pingServer(client, tservers.get(0)) == false, 60_000);
       return true;

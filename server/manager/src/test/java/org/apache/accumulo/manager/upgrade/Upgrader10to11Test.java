@@ -81,11 +81,11 @@ class Upgrader10to11Test {
   @Test
   void upgradeZooKeeperGoPath() throws Exception {
     expect(context.getPropStore()).andReturn(propStore).anyTimes();
-    expect(zk.exists(buildRepTablePath(instanceId), null)).andReturn(new Stat()).once();
-    expect(zk.getData(buildRepTablePath(instanceId) + ZTABLE_STATE, null, null))
+    expect(zk.exists(buildRepTablePath(), null)).andReturn(new Stat()).once();
+    expect(zk.getData(buildRepTablePath() + ZTABLE_STATE, null, null))
         .andReturn(TableState.OFFLINE.name().getBytes(UTF_8)).once();
-    expect(zk.getChildren(buildRepTablePath(instanceId), null)).andReturn(List.of());
-    zk.delete(buildRepTablePath(instanceId), -1);
+    expect(zk.getChildren(buildRepTablePath(), null)).andReturn(List.of());
+    zk.delete(buildRepTablePath(), -1);
     expectLastCall().once();
 
     expect(propStore.get(TablePropKey.of(instanceId, AccumuloTable.METADATA.tableId())))
@@ -99,7 +99,7 @@ class Upgrader10to11Test {
 
   @Test
   void upgradeZookeeperNoReplTableNode() throws Exception {
-    expect(zk.exists(buildRepTablePath(instanceId), null)).andReturn(null).once();
+    expect(zk.exists(buildRepTablePath(), null)).andReturn(null).once();
     replay(context, zk, propStore);
 
     Upgrader10to11 upgrader = new Upgrader10to11();
@@ -110,11 +110,11 @@ class Upgrader10to11Test {
   void checkReplicationStateOffline() throws Exception {
 
     expect(context.getPropStore()).andReturn(propStore).anyTimes();
-    expect(zk.exists(buildRepTablePath(instanceId), null)).andReturn(new Stat()).once();
-    expect(zk.getData(buildRepTablePath(instanceId) + ZTABLE_STATE, null, null))
+    expect(zk.exists(buildRepTablePath(), null)).andReturn(new Stat()).once();
+    expect(zk.getData(buildRepTablePath() + ZTABLE_STATE, null, null))
         .andReturn(TableState.OFFLINE.name().getBytes(UTF_8)).once();
-    expect(zk.getChildren(buildRepTablePath(instanceId), null)).andReturn(List.of());
-    zk.delete(buildRepTablePath(instanceId), -1);
+    expect(zk.getChildren(buildRepTablePath(), null)).andReturn(List.of());
+    zk.delete(buildRepTablePath(), -1);
     expectLastCall().once();
     expect(propStore.get(TablePropKey.of(instanceId, AccumuloTable.METADATA.tableId())))
         .andReturn(new VersionedProperties()).once();
@@ -128,8 +128,8 @@ class Upgrader10to11Test {
 
   @Test
   void checkReplicationStateOnline() throws Exception {
-    expect(zk.exists(buildRepTablePath(instanceId), null)).andReturn(new Stat()).once();
-    expect(zk.getData(buildRepTablePath(instanceId) + ZTABLE_STATE, null, null))
+    expect(zk.exists(buildRepTablePath(), null)).andReturn(new Stat()).once();
+    expect(zk.getData(buildRepTablePath() + ZTABLE_STATE, null, null))
         .andReturn(TableState.ONLINE.name().getBytes(UTF_8)).anyTimes();
     replay(context, zk, propStore);
 
@@ -139,8 +139,8 @@ class Upgrader10to11Test {
 
   @Test
   void checkReplicationStateNoNode() throws Exception {
-    expect(zk.exists(buildRepTablePath(instanceId), null)).andReturn(new Stat()).once();
-    expect(zk.getData(buildRepTablePath(instanceId) + ZTABLE_STATE, null, null))
+    expect(zk.exists(buildRepTablePath(), null)).andReturn(new Stat()).once();
+    expect(zk.getData(buildRepTablePath() + ZTABLE_STATE, null, null))
         .andThrow(new KeeperException.NoNodeException("force no node exception")).anyTimes();
     replay(context, zk, propStore);
 

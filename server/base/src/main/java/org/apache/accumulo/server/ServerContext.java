@@ -51,7 +51,6 @@ import org.apache.accumulo.core.crypto.CryptoFactoryLoader;
 import org.apache.accumulo.core.data.InstanceId;
 import org.apache.accumulo.core.data.NamespaceId;
 import org.apache.accumulo.core.data.TableId;
-import org.apache.accumulo.core.fate.zookeeper.ZooUtil;
 import org.apache.accumulo.core.metadata.schema.Ample;
 import org.apache.accumulo.core.metrics.MetricsInfo;
 import org.apache.accumulo.core.rpc.SslConnectionParams;
@@ -118,7 +117,6 @@ public class ServerContext extends ClientContext {
     @SuppressWarnings("resource")
     var tmpPropStore = memoize(() -> ZooPropStore.initialize(getInstanceID(), getZooSession()));
     propStore = tmpPropStore;
-    zkUserPath = memoize(() -> Constants.ZUSERS);
 
     tableManager = memoize(() -> new TableManager(this));
     nameAllocator = memoize(() -> new UniqueNameAllocator(this));

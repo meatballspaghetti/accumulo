@@ -27,25 +27,27 @@ import org.apache.accumulo.core.lock.ServiceLock;
 public class ZookeeperLockChecker implements TabletServerLockChecker {
 
   private final ZooCache zc;
+  private final String root;
 
-  ZookeeperLockChecker(ClientContext context) {
-      this.zc = requireNonNull(zooCache);
+  ZookeeperLockChecker(ZooCache zooCache, String basePath) {
+    this.zc = requireNonNull(zooCache);
+    this.root = requireNonNull(basePath);
   }
 
   public boolean doesTabletServerLockExist(String server) {
-    var zLockPath = ServiceLock.path(Constants.ZTSERVERS + "/" + server);
+    var zLockPath = ServiceLock.path(root + "/" + server);
     return ServiceLock.getSessionId(zc, zLockPath) != 0;
   }
 
   @Override
   public boolean isLockHeld(String tserver, String session) {
-    var zLockPath = ServiceLock.path(Constants.ZTSERVERS + "/" + tserver);
+    var zLockPath = ServiceLock.path(root + "/" + tserver);
     return ServiceLock.getSessionId(zc, zLockPath) == Long.parseLong(session, 16);
   }
 
   @Override
   public void invalidateCache(String tserver) {
-    zc.clear(Constants.ZTSERVERS + "/" + tserver);
+    zc.clear(root + "/" + tserver);
   }
 
 }

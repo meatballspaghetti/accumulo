@@ -214,8 +214,8 @@ public class CompactionCoordinator extends AbstractServer
     final String coordinatorClientAddress = ExternalCompactionUtil.getHostPortString(clientAddress);
     final UUID zooLockUUID = UUID.randomUUID();
 
-    coordinatorLock =
-        new ServiceLock(getContext().getZooSession(), ServiceLock.path(Constants.ZCOORDINATOR_LOCK), zooLockUUID);
+    coordinatorLock = new ServiceLock(getContext().getZooSession(),
+        ServiceLock.path(Constants.ZCOORDINATOR_LOCK), zooLockUUID);
     while (true) {
 
       CoordinatorLockWatcher coordinatorLockWatcher = new CoordinatorLockWatcher();

@@ -81,13 +81,13 @@ public class CompactionDriverTest {
 
   @Test
   public void testTableBeingDeleted() throws Exception {
-    String deleteMarkerPath = PreDeleteTable.createDeleteMarkerPath(instance, tableId);
+    String deleteMarkerPath = PreDeleteTable.createDeleteMarkerPath(tableId);
     expect(zk.exists(deleteMarkerPath, null)).andReturn(new Stat()).once();
     runDriver(compactId - 1, TableOperationsImpl.TABLE_DELETED_MSG);
   }
 
   private void runDriver(long cancelId, String expectedMessage) throws Exception {
-    final String zCancelID = CompactionDriver.createCompactionCancellationPath(instance, tableId);
+    final String zCancelID = CompactionDriver.createCompactionCancellationPath(tableId);
     expect(zk.getData(zCancelID, null, null)).andReturn(Long.toString(cancelId).getBytes(UTF_8));
 
     final var driver = new CompactionDriver(compactId, namespaceId, tableId, startRow, endRow);
