@@ -144,8 +144,6 @@ public class ZKAuthenticatorTest {
     var instanceId = InstanceId.of("example");
     ZooSession zk = createMock(ZooSession.class);
     ServerContext context = MockServerContext.getWithMockZK(zk);
-    expect(context.zkUserPath()).andReturn(ZooUtil.getRoot(instanceId) + Constants.ZUSERS)
-        .anyTimes();
     expect(zk.getChildren(anyObject(), anyObject())).andReturn(Arrays.asList(principal)).anyTimes();
     expect(zk.exists(matches(ZooUtil.getRoot(instanceId) + Constants.ZUSERS + "/" + principal),
         anyObject(Watcher.class))).andReturn(new Stat()).anyTimes();
